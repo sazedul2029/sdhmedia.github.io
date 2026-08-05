@@ -1,104 +1,166 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SDH Media Gallery</title>
-    <!-- CSS & FontAwesome Icons -->
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" type="image/png" href="favicon.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SDH Media Pro - Premier Gallery</title>
+  <link rel="icon" href="favicon.png" type="image/png">
+  <link rel="stylesheet" href="style.css">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="dark-mode">
+<body>
 
-    <!-- Navbar / Header Section -->
-    <header class="navbar">
-        <div class="logo-area">
-            <img src="sazedul2029.png" alt="SDH Logo" class="profile-logo">
-            <div class="brand-info">
-                <h1>SDH Media Gallery</h1>
-                <p>All-in-One Digital Asset Hub</p>
-            </div>
+  <!-- Top Announcement Bar -->
+  <div class="top-bar">
+    <span>✨ Welcome to SDH Media Gallery - Explore & Download Media Assets</span>
+  </div>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo">
+      <img src="sazedul2029.png" alt="Logo">
+      <div class="logo-text">
+        <span class="brand-name">SDH Media</span>
+        <span class="brand-tag">PRO GALLERY</span>
+      </div>
+    </div>
+
+    <!-- Live Search Bar -->
+    <div class="search-box">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="searchInput" placeholder="খুঁজুন (Search media)..." onkeyup="filterMedia()">
+    </div>
+
+    <!-- Right Controls -->
+    <div class="nav-right">
+      <button class="auth-btn" onclick="openAuthModal()"><i class="fa-solid fa-user-plus"></i> <span id="authBtnText">Sign Up / Login</span></button>
+      <button class="icon-btn" id="settingsBtn" onclick="toggleSettingsModal()" title="Control Settings"><i class="fa-solid fa-gear"></i></button>
+      <button class="icon-btn" id="viewToggleBtn" onclick="toggleLayout()" title="Grid/List View"><i class="fa-solid fa-list"></i></button>
+      <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="Theme Switcher"><i class="fa-solid fa-moon"></i></button>
+    </div>
+  </header>
+
+  <!-- Hero / Dashboard Stats Bar -->
+  <section class="stats-banner">
+    <div class="stat-card">
+      <i class="fa-solid fa-image"></i>
+      <div><h4 id="statPhotos">0</h4><p>Photos</p></div>
+    </div>
+    <div class="stat-card">
+      <i class="fa-solid fa-video"></i>
+      <div><h4 id="statVideos">0</h4><p>Videos</p></div>
+    </div>
+    <div class="stat-card">
+      <i class="fa-solid fa-download"></i>
+      <div><h4 id="statDownloads">0</h4><p>Downloads</p></div>
+    </div>
+  </section>
+
+  <!-- Filter Category Bar -->
+  <div class="filter-container">
+    <button class="filter-btn active" onclick="filterCategory('all', this)"><i class="fa-solid fa-border-all"></i> সব (All)</button>
+    <button class="filter-btn" onclick="filterCategory('photo', this)"><i class="fa-solid fa-image"></i> ছবি (Photos)</button>
+    <button class="filter-btn" onclick="filterCategory('video', this)"><i class="fa-solid fa-video"></i> ভিডিও (Videos)</button>
+    <button class="filter-btn" onclick="filterCategory('fav', this)"><i class="fa-solid fa-heart"></i> পছন্দের তালিকা (Favorites ❤️)</button>
+  </div>
+
+  <!-- Gallery Grid Container -->
+  <main class="gallery-grid" id="galleryGrid">
+    <!-- Dynamic Cards will be loaded here -->
+  </main>
+
+  <!-- Admin Settings & Upload Station Modal -->
+  <div id="settingsModal" class="modal" onclick="closeSettingsModal(event)">
+    <div class="modal-content settings-modal-content">
+      <span class="modal-close" onclick="closeSettingsModalDirect()">&times;</span>
+      <h2><i class="fa-solid fa-sliders"></i> Admin & Control Settings</h2>
+      <p class="modal-sub">সাইটের পছন্দসমূহ নিয়ন্ত্রণ এবং কনটেন্ট ম্যানেজমেন্ট।</p>
+
+      <!-- Admin Access Section -->
+      <div class="settings-section">
+        <div class="upload-header">
+          <h3><i class="fa-solid fa-shield-halved"></i> Admin Control</h3>
+          <button class="admin-unlock-btn" id="adminLockBtn" onclick="toggleAdminAccess()">
+            <i class="fa-solid fa-lock" id="lockIcon"></i> <span id="lockText">Unlock Admin</span>
+          </button>
         </div>
 
-        <div class="header-tools">
-            <!-- Feature 1: Dark/Light Mode Toggle -->
-            <button id="theme-toggle" class="icon-btn" title="Toggle Theme">
-                <i class="fa-solid fa-sun"></i>
+        <!-- Upload Station Form -->
+        <form id="uploadForm" class="upload-form locked" onsubmit="handleUpload(event)">
+          <h4 style="margin-bottom: 8px; color: var(--accent-color);"><i class="fa-solid fa-cloud-arrow-up"></i> Upload New Asset</h4>
+          <div class="form-group">
+            <input type="text" id="mediaTitle" placeholder="মিডিয়ার নাম বা বিবরণ..." required disabled>
+            <select id="mediaCategory" disabled>
+              <option value="photo">ছবি (Photo)</option>
+              <option value="video">ভিডিও (Video)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <input type="file" id="mediaFile" accept="image/*,video/*" required disabled>
+            <button type="submit" id="submitUploadBtn" class="btn-upload" disabled>
+              <i class="fa-solid fa-cloud-arrow-up"></i> পাবলিশ করুন
             </button>
+          </div>
+          <div id="uploadProgress" class="upload-progress"></div>
+        </form>
+      </div>
+
+      <hr class="settings-divider">
+
+      <!-- Additional Settings Features -->
+      <div class="settings-section">
+        <h3><i class="fa-solid fa-gears"></i> Advanced Preferences</h3>
+        <div class="setting-item">
+          <span><i class="fa-solid fa-volume-high"></i> ভিডিও সাউন্ড অটো-প্লে</span>
+          <label class="switch">
+            <input type="checkbox" id="autoplayToggle" onchange="toggleAutoplay(this)">
+            <span class="slider round"></span>
+          </label>
         </div>
-    </header>
-
-    <div class="main-container">
-        <!-- Search & Category Filters Bar -->
-        <section class="top-controls">
-            <!-- Feature 2: Real-time Search Bar -->
-            <div class="search-wrapper">
-                <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                <input type="text" id="search-input" placeholder="Search media files, titles, tags...">
-            </div>
-
-            <!-- Feature 3: Category Filtering -->
-            <div class="filter-group">
-                <button class="filter-btn active" data-category="all">All Media</button>
-                <button class="filter-btn" data-category="photo"><i class="fa-solid fa-image"></i> Photos</button>
-                <button class="filter-btn" data-category="video"><i class="fa-solid fa-video"></i> Videos</button>
-                <!-- Feature 4: Favorites Filter -->
-                <button class="filter-btn" data-category="favorites"><i class="fa-solid fa-heart"></i> Favorites</button>
-            </div>
-        </section>
-
-        <!-- Media Upload Box -->
-        <section class="upload-section">
-            <div class="card-header">
-                <h3><i class="fa-solid fa-cloud-arrow-up"></i> Upload New Media</h3>
-            </div>
-            <form id="upload-form" class="upload-form">
-                <div class="input-field">
-                    <input type="text" id="media-title" placeholder="Enter title or description..." required>
-                </div>
-                <div class="input-field">
-                    <select id="media-category" required>
-                        <option value="photo">Photo / Image</option>
-                        <option value="video">Video File</option>
-                    </select>
-                </div>
-                <div class="input-field file-input-wrapper">
-                    <input type="file" id="media-file" accept="image/*,video/*" required>
-                </div>
-                <button type="submit" class="submit-btn"><i class="fa-solid fa-upload"></i> Upload & Save</button>
-            </form>
-        </section>
-
-        <!-- Dynamic Media Gallery Grid -->
-        <section class="gallery-wrapper">
-            <div class="section-title">
-                <h2><i class="fa-solid fa-photo-film"></i> Media Assets</h2>
-            </div>
-            
-            <div id="media-grid" class="gallery-grid">
-                <!-- Javascript will load items dynamically here -->
-            </div>
-        </section>
-    </div>
-
-    <!-- Feature 5: Lightbox Fullscreen Modal -->
-    <div id="lightbox-modal" class="lightbox">
-        <span class="close-lightbox">&times;</span>
-        <div class="lightbox-body">
-            <div id="lightbox-media-container"></div>
-            <div class="lightbox-caption">
-                <p id="lightbox-caption-text"></p>
-            </div>
+        <div class="setting-item">
+          <span><i class="fa-solid fa-eye-slash"></i> ভিউ কাউন্টার হাইড করুন</span>
+          <label class="switch">
+            <input type="checkbox" id="hideViewsToggle" onchange="toggleHideViews(this)">
+            <span class="slider round"></span>
+          </label>
         </div>
+        <div class="setting-item">
+          <button class="btn-danger-action" onclick="clearAllData()"><i class="fa-solid fa-rotate-left"></i> সাইট রিসেট করুন (Reset Local Cache)</button>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2026 SDH Media Gallery | Designed with Care</p>
-    </footer>
+  <!-- Sign Up / Login Modal -->
+  <div id="authModal" class="modal" onclick="closeAuthModal(event)">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeAuthModalDirect()">&times;</span>
+      <h2><i class="fa-solid fa-user-circle"></i> User Sign Up / Login</h2>
+      <p class="modal-sub">একাউন্ট তৈরি করুন বা লগইন করে এক্সক্লুসিভ এক্সপেরিয়েন্স উপভোগ করুন।</p>
+      <form onsubmit="handleAuth(event)">
+        <input type="text" id="userName" placeholder="আপনার নাম (Full Name)" required>
+        <input type="email" id="userEmail" placeholder="ইমেইল (Email Address)" required>
+        <input type="password" id="userPass" placeholder="পাসওয়ার্ড (Password)" required>
+        <button type="submit" class="btn-submit-auth">একাউন্ট তৈরি করুন</button>
+      </form>
+    </div>
+  </div>
 
-    <!-- JS Script Connection -->
-    <script src="script.js"></script>
+  <!-- Fullscreen Lightbox Modal -->
+  <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
+    <span class="close-btn">&times;</span>
+    <div class="lightbox-body" id="lightboxBody"></div>
+    <div id="lightboxCaption" class="caption"></div>
+  </div>
+
+  <!-- Footer with Developer Credit -->
+  <footer class="footer">
+    <p>© 2026 SDH Media Gallery. All Rights Reserved. Managed by Admin.</p>
+    <p class="developer-credit">Developed with ❤️ by <strong>MD SAZEDUL HAQUE</strong> (SDH Founder & Creator)</p>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
-</html>
+            </html>
+            
