@@ -1,3 +1,6 @@
+const CLOUD_NAME = "crkxguin"; 
+const UPLOAD_PRESET = "ml_default"; 
+
 // Global State
 let isAdminUnlocked = false;
 
