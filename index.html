@@ -1,41 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <!-- Google Verification -->
-  <meta name="google-site-verification" content="sXnnEZKWIvZap2gsMef_IVOG4vP2ZrC8oZZJZbgeH0o" />
+  <title>SDH Media Pro | MWM & Bangla Cat Gas Generator Tools Hub</title>
 
-  <!-- Primary SEO -->
-  <title>SDH Media Pro | MWM & Bangla Cat Gas Generator Technical Hub</title>
-  <meta name="title" content="SDH Media Pro | MWM & Bangla Cat Gas Generator Technical Hub">
-  <meta name="description" content="Official SDH Media Pro Portal: High-speed MWM & Bangla Cat Gas Generator Technical, premium HD photo/video gallery, and instant downloads.">
-  <meta name="keywords" content="SDH Media, MWM, Bangla Cat Gas Generator, SDH Media Pro, Media Hub, HD Downloads">
-  <meta name="author" content="MD SAZEDUL HAQUE">
+  <!-- Google & Browser Favicon / Logo Setup -->
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon.png">
+  <link rel="shortcut icon" href="favicon.png">
 
-  <!-- Icons -->
-  <link rel="icon" href="sazedul2029.png" type="image/png">
-  <link rel="shortcut icon" href="sazedul2029.png" type="image/png">
-  <link rel="apple-touch-icon" href="sazedul2029.png">
+  <!-- Open Graph / SEO Preview Tags -->
+  <meta property="og:title" content="SDH Media Pro">
+  <meta property="og:description" content="High-speed MWM & Bangla Cat Gas Generator tools and media portal.">
+  <meta property="og:image" content="https://sazedul2029.github.io/sazedul2029.png">
 
-  <!-- FontAwesome & CSS -->
+  <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="./style.css">
+
+  <!-- Style CSS Link -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- Announcement Bar -->
+  <!-- Marquee Banner -->
   <div class="top-bar">
     <div class="marquee-track">
-      <span>✨ Welcome to SDH Media Pro — Official Portal for MWM, Bangla Cat Gas Generator & Premier HD Assets! 🔥</span>
+      🔥 Welcome to SDH Media Pro Portal! High-Speed MWM & Bangla Cat Gas Generator Tools & HD Assets Available!
     </div>
   </div>
 
-  <!-- Navbar -->
+  <!-- Navigation Bar -->
   <header class="navbar">
     <div class="logo">
-      <img src="sazedul2029.png" alt="SDH Logo" onerror="this.src='https://via.placeholder.com/40'">
+      <img src="sazedul2029.png" alt="SDH Media Logo" id="navLogo">
       <div class="logo-text">
         <span class="brand-name">SDH Media</span>
         <span class="brand-tag">PRO GALLERY</span>
@@ -44,109 +43,119 @@
 
     <div class="search-box">
       <i class="fa-solid fa-magnifying-glass"></i>
-      <input type="text" id="searchInput" placeholder="Search MWM, Bangla Cat, Photos..." onkeyup="filterMedia()">
+      <input type="text" id="searchInput" placeholder="Search assets..." onkeyup="filterMedia()">
     </div>
 
     <div class="nav-right">
-      <button class="auth-btn" onclick="openAuthModal()"><i class="fa-solid fa-user-plus"></i> <span id="authBtnText">Account</span></button>
-      <button class="icon-btn" onclick="toggleSettingsModal()" title="Settings"><i class="fa-solid fa-gear"></i></button>
-      <button class="icon-btn" onclick="toggleTheme()" title="Theme"><i class="fa-solid fa-moon"></i></button>
+      <button class="auth-btn" onclick="openAuthModal()">
+        <i class="fa-solid fa-user-plus"></i> Account
+      </button>
+      <button class="icon-btn" onclick="toggleSettingsModal()">
+        <i class="fa-solid fa-gear"></i>
+      </button>
+      <button class="icon-btn" onclick="toggleTheme()">
+        <i class="fa-solid fa-moon"></i>
+      </button>
     </div>
   </header>
 
-  <!-- Stats Banner -->
-  <section class="stats-banner">
+  <!-- Stats Bar -->
+  <div class="stats-banner">
     <div class="stat-card">
       <i class="fa-solid fa-image"></i>
-      <div><h4 id="statPhotos">0</h4><p>Photos</p></div>
+      <div>
+        <h3 id="statPhotos">0</h3>
+        <p>Photos</p>
+      </div>
     </div>
     <div class="stat-card">
       <i class="fa-solid fa-video"></i>
-      <div><h4 id="statVideos">0</h4><p>Videos</p></div>
+      <div>
+        <h3 id="statVideos">0</h3>
+        <p>Videos</p>
+      </div>
     </div>
     <div class="stat-card">
       <i class="fa-solid fa-download"></i>
-      <div><h4 id="statDownloads">0</h4><p>Total Assets</p></div>
+      <div>
+        <h3 id="statDownloads">0</h3>
+        <p>Total Assets</p>
+      </div>
     </div>
-  </section>
+  </div>
 
-  <!-- Category Filter Bar -->
+  <!-- Filter Buttons -->
   <div class="filter-container">
-    <button class="filter-btn active" onclick="filterCategory('all', this)"><i class="fa-solid fa-border-all"></i> All Assets</button>
-    <button class="filter-btn" onclick="filterCategory('photo', this)"><i class="fa-solid fa-image"></i> Photos</button>
-    <button class="filter-btn" onclick="filterCategory('video', this)"><i class="fa-solid fa-video"></i> Videos</button>
+    <button class="filter-btn active" onclick="filterCategory('all', this)">
+      <i class="fa-solid fa-border-all"></i> All Assets
+    </button>
+    <button class="filter-btn" onclick="filterCategory('photo', this)">
+      <i class="fa-solid fa-image"></i> Photos
+    </button>
+    <button class="filter-btn" onclick="filterCategory('video', this)">
+      <i class="fa-solid fa-video"></i> Videos
+    </button>
   </div>
 
   <!-- Gallery Grid -->
-  <main class="gallery-grid" id="galleryGrid">
-    <!-- Media items render here dynamically -->
+  <main id="galleryGrid" class="gallery-grid">
+    <!-- Dynamic Content Loaded via JS -->
   </main>
 
-  <!-- Settings / Admin Modal -->
+  <!-- Settings / Upload Modal -->
   <div id="settingsModal" class="modal" onclick="closeSettingsModal(event)">
-    <div class="modal-content">
+    <div class="modal-content" onclick="event.stopPropagation()">
       <span class="modal-close" onclick="closeSettingsModalDirect()">&times;</span>
-      <h2><i class="fa-solid fa-sliders"></i> Control Panel</h2>
-      <p class="modal-sub">Upload & Manage Cloud Assets</p>
+      
+      <div class="upload-header">
+        <h3>Control Panel</h3>
+        <button type="button" class="admin-unlock-btn" onclick="toggleAdminAccess()">
+          <i id="lockIcon" class="fa-solid fa-lock"></i> <span id="lockText">Unlock Admin</span>
+        </button>
+      </div>
 
       <div class="settings-section">
-        <div class="upload-header">
-          <h3><i class="fa-solid fa-shield-halved"></i> Admin Access</h3>
-          <button class="admin-unlock-btn" id="adminLockBtn" onclick="toggleAdminAccess()">
-            <i class="fa-solid fa-lock" id="lockIcon"></i> <span id="lockText">Unlock Admin</span>
-          </button>
-        </div>
-
+        <h4>Upload Media</h4>
         <form id="uploadForm" class="upload-form locked" onsubmit="handleUpload(event)">
-          <h4 style="margin: 12px 0 6px 0; color: var(--accent-color);"><i class="fa-solid fa-cloud-arrow-up"></i> Upload to Cloudinary</h4>
-          <div class="form-group">
-            <input type="text" id="mediaTitle" placeholder="Asset Title..." required disabled>
-            <select id="mediaCategory" disabled>
-              <option value="photo">Photo</option>
-              <option value="video">Video</option>
-            </select>
-          </div>
-          <div class="form-group" style="margin-top: 10px;">
-            <input type="file" id="mediaFile" accept="image/*,video/*" required disabled>
-            <button type="submit" id="submitUploadBtn" class="btn-upload" disabled style="margin-top: 10px;">
-              <i class="fa-solid fa-cloud-arrow-up"></i> Publish Asset
-            </button>
-          </div>
+          <input type="text" id="mediaTitle" placeholder="Asset Title / Name" required disabled>
+          <select id="mediaCategory" disabled>
+            <option value="photo">Photo</option>
+            <option value="video">Video</option>
+          </select>
+          <input type="file" id="mediaFile" accept="image/*,video/*" required disabled>
+          <button type="submit" id="submitUploadBtn" class="btn-upload" disabled>Publish Asset</button>
         </form>
       </div>
 
       <hr class="settings-divider">
 
       <div class="settings-section">
-        <h3><i class="fa-solid fa-gears"></i> Preferences</h3>
-        <div class="setting-item" style="margin-top: 10px;">
-          <button class="btn-danger-action" onclick="clearAllData()"><i class="fa-solid fa-rotate-left"></i> Clear Cache</button>
-        </div>
+        <button class="btn-danger-action" onclick="clearAllData()">
+          <i class="fa-solid fa-trash"></i> Reset All Data
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- Account Modal -->
+  <!-- Auth Modal -->
   <div id="authModal" class="modal" onclick="closeAuthModal(event)">
-    <div class="modal-content">
+    <div class="modal-content" onclick="event.stopPropagation()">
       <span class="modal-close" onclick="closeAuthModalDirect()">&times;</span>
-      <h2><i class="fa-solid fa-user-circle"></i> Account Login</h2>
-      <p class="modal-sub">Sign in for personalized features.</p>
-      <form onsubmit="handleAuth(event)">
-        <input type="text" id="userName" placeholder="Full Name" required>
-        <input type="email" id="userEmail" placeholder="Email Address" required>
-        <input type="password" id="userPass" placeholder="Password" required>
-        <button type="submit" class="btn-submit-auth">Sign In</button>
+      <h3>Account Portal</h3>
+      <form onsubmit="handleAuth(event)" class="upload-form" style="margin-top:15px;">
+        <input type="email" placeholder="Email Address" required>
+        <input type="password" placeholder="Password" required>
+        <button type="submit" class="btn-upload">Login / Register</button>
       </form>
     </div>
   </div>
 
   <!-- Footer -->
   <footer class="footer">
-    <p>© 2026 SDH Media Gallery. All Rights Reserved.</p>
-    <p class="developer-credit">Developed with ❤️ by <strong>MD SAZEDUL HAQUE</strong> (SDH Founder & Creator)</p>
+    <p>&copy; 2026 SDH Media Gallery. All Rights Reserved.</p>
   </footer>
 
+  <!-- Script JS Link -->
   <script src="script.js"></script>
 </body>
 </html>
