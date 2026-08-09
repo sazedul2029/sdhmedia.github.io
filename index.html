@@ -4,22 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <!-- Google Search Console Verification -->
+  <!-- Google Verification -->
   <meta name="google-site-verification" content="sXnnEZKWIvZap2gsMef_IVOG4vP2ZrC8oZZJZbgeH0o" />
 
-  <!-- Primary SEO Meta Tags -->
+  <!-- Primary SEO -->
   <title>SDH Media Pro | MWM & Bangla Cat Gas Generator Tools Hub</title>
-  <meta name="title" content="SDH Media Pro | MWM & Bangla Cat Gas Generator Tools Hub">
-  <meta name="description" content="Official SDH Media Pro Portal: High-speed MWM & Bangla Cat Gas Generator tools, premium HD photo/video gallery, and instant downloads.">
+  <meta name="title" content="SDH Media Pro | MWM & Bangla Cat Gas Generator Technical Hub">
+  <meta name="description" content="Official SDH Media Pro Portal: High-speed MWM & Bangla Cat Gas Generator Technical, premium HD photo/video gallery, and instant downloads.">
   <meta name="keywords" content="SDH Media, MWM, Bangla Cat Gas Generator, SDH Media Pro, Media Hub, HD Downloads">
   <meta name="author" content="MD SAZEDUL HAQUE">
 
-  <!-- Favicon & Icons -->
+  <!-- Icons -->
   <link rel="icon" href="sazedul2029.png" type="image/png">
   <link rel="shortcut icon" href="sazedul2029.png" type="image/png">
   <link rel="apple-touch-icon" href="sazedul2029.png">
 
-  <!-- Schema.org Google Site Name Markup -->
+  <!-- Schema Site Name -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -30,20 +30,13 @@
   }
   </script>
 
-  <!-- Open Graph / Social Sharing (Facebook, WhatsApp, etc.) -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://sazedul2029.github.io/sdhmedia.github.io/">
-  <meta property="og:title" content="SDH Media Pro | Official Media & Tools Hub">
-  <meta property="og:description" content="Explore MWM tools, Bangla Cat Gas Generator assets, and high-speed HD downloads.">
-  <meta property="og:image" content="https://sazedul2029.github.io/sdhmedia.github.io/sazedul2029.png">
-
-  <!-- Stylesheets & Fonts -->
-  <link rel="stylesheet" href="style.css">
+  <!-- External Styles & FontAwesome Icon -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
 
-  <!-- Top Announcement Marquee -->
+  <!-- Announcement Bar -->
   <div class="top-bar">
     <div class="marquee-track">
       <span>✨ Welcome to SDH Media Pro — Official Portal for MWM, Bangla Cat Gas Generator & Premier HD Assets! 🔥</span>
@@ -53,29 +46,27 @@
   <!-- Navbar -->
   <header class="navbar">
     <div class="logo">
-      <img src="sazedul2029.png" alt="SDH Logo" loading="eager">
+      <img src="sazedul2029.png" alt="SDH Logo">
       <div class="logo-text">
         <span class="brand-name">SDH Media</span>
         <span class="brand-tag">PRO GALLERY</span>
       </div>
     </div>
 
-    <!-- Search Box -->
     <div class="search-box">
       <i class="fa-solid fa-magnifying-glass"></i>
-      <input type="text" id="searchInput" placeholder="Search MWM, Bangla Cat, Photos, Videos..." onkeyup="filterMedia()">
+      <input type="text" id="searchInput" placeholder="Search MWM, Bangla Cat, Photos..." onkeyup="filterMedia()">
     </div>
 
-    <!-- Nav Right Action Controls -->
     <div class="nav-right">
       <button class="auth-btn" onclick="openAuthModal()"><i class="fa-solid fa-user-plus"></i> <span id="authBtnText">Account</span></button>
-      <button class="icon-btn" id="settingsBtn" onclick="toggleSettingsModal()" title="Control Settings"><i class="fa-solid fa-gear"></i></button>
-      <button class="icon-btn" id="viewToggleBtn" onclick="toggleLayout()" title="Grid/List View"><i class="fa-solid fa-list"></i></button>
-      <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="Theme Switcher"><i class="fa-solid fa-moon"></i></button>
+      <button class="icon-btn" onclick="toggleSettingsModal()" title="Settings"><i class="fa-solid fa-gear"></i></button>
+      <button class="icon-btn" onclick="toggleLayout()" title="Grid/List"><i class="fa-solid fa-list"></i></button>
+      <button class="icon-btn" onclick="toggleTheme()" title="Theme"><i class="fa-solid fa-moon"></i></button>
     </div>
   </header>
 
-  <!-- Hero Dashboard Banner -->
+  <!-- Stats Banner -->
   <section class="stats-banner">
     <div class="stat-card">
       <i class="fa-solid fa-image"></i>
@@ -99,17 +90,17 @@
     <button class="filter-btn" onclick="filterCategory('fav', this)"><i class="fa-solid fa-heart"></i> Favorites ❤️</button>
   </div>
 
-  <!-- Dynamic Gallery Grid -->
+  <!-- Gallery Grid -->
   <main class="gallery-grid" id="galleryGrid">
-    <!-- Media Items Will Load Dynamically via JS -->
+    <!-- Assets render here -->
   </main>
 
-  <!-- Settings & Admin Modal -->
+  <!-- Settings Modal -->
   <div id="settingsModal" class="modal" onclick="closeSettingsModal(event)">
-    <div class="modal-content settings-modal-content">
+    <div class="modal-content">
       <span class="modal-close" onclick="closeSettingsModalDirect()">&times;</span>
       <h2><i class="fa-solid fa-sliders"></i> Admin Control Panel</h2>
-      <p class="modal-sub">Manage platform assets and preferences.</p>
+      <p class="modal-sub">Manage platform settings.</p>
 
       <div class="settings-section">
         <div class="upload-header">
@@ -120,9 +111,9 @@
         </div>
 
         <form id="uploadForm" class="upload-form locked" onsubmit="handleUpload(event)">
-          <h4 style="margin-bottom: 8px; color: var(--accent-color);"><i class="fa-solid fa-cloud-arrow-up"></i> Upload New Asset</h4>
+          <h4 style="margin: 10px 0; color: var(--accent-color);"><i class="fa-solid fa-cloud-arrow-up"></i> Upload New Asset</h4>
           <div class="form-group">
-            <input type="text" id="mediaTitle" placeholder="Asset Title / Keyword..." required disabled>
+            <input type="text" id="mediaTitle" placeholder="Asset Title..." required disabled>
             <select id="mediaCategory" disabled>
               <option value="photo">Photo</option>
               <option value="video">Video</option>
@@ -134,7 +125,6 @@
               <i class="fa-solid fa-cloud-arrow-up"></i> Publish
             </button>
           </div>
-          <div id="uploadProgress" class="upload-progress"></div>
         </form>
       </div>
 
@@ -143,18 +133,12 @@
       <div class="settings-section">
         <h3><i class="fa-solid fa-gears"></i> Preferences</h3>
         <div class="setting-item">
-          <span><i class="fa-solid fa-volume-high"></i> Video Autoplay Sound</span>
-          <label class="switch">
-            <input type="checkbox" id="autoplayToggle" onchange="toggleAutoplay(this)">
-            <span class="slider round"></span>
-          </label>
+          <span><i class="fa-solid fa-volume-high"></i> Video Sound</span>
+          <input type="checkbox" id="autoplayToggle" onchange="toggleAutoplay(this)">
         </div>
         <div class="setting-item">
-          <span><i class="fa-solid fa-eye-slash"></i> Hide View Counts</span>
-          <label class="switch">
-            <input type="checkbox" id="hideViewsToggle" onchange="toggleHideViews(this)">
-            <span class="slider round"></span>
-          </label>
+          <span><i class="fa-solid fa-eye-slash"></i> Hide Views</span>
+          <input type="checkbox" id="hideViewsToggle" onchange="toggleHideViews(this)">
         </div>
         <div class="setting-item">
           <button class="btn-danger-action" onclick="clearAllData()"><i class="fa-solid fa-rotate-left"></i> Purge Local Cache</button>
@@ -163,7 +147,7 @@
     </div>
   </div>
 
-  <!-- User Account Modal -->
+  <!-- Account Modal -->
   <div id="authModal" class="modal" onclick="closeAuthModal(event)">
     <div class="modal-content">
       <span class="modal-close" onclick="closeAuthModalDirect()">&times;</span>
@@ -178,27 +162,12 @@
     </div>
   </div>
 
-  <!-- Lightbox Preview Modal -->
-  <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
-    <span class="close-btn">&times;</span>
-    <div class="lightbox-body" id="lightboxBody"></div>
-    <div id="lightboxCaption" class="caption"></div>
-  </div>
-
-  <!-- Toast Container -->
-  <div id="toastContainer" class="toast-container"></div>
-
-  <!-- Professional Footer -->
+  <!-- Footer -->
   <footer class="footer">
     <p>© 2026 SDH Media Gallery. All Rights Reserved.</p>
     <p class="developer-credit">Developed with ❤️ by <strong>MD SAZEDUL HAQUE</strong> (SDH Founder & Creator)</p>
   </footer>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
-  <!-- Main JavaScript File -->
   <script src="script.js"></script>
 </body>
 </html>
