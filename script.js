@@ -1,4 +1,4 @@
-// Cloudinary Config
+// Cloudinary Configuration
 const CLOUD_NAME = "crkxguin";
 const UPLOAD_PRESET = "ml_default";
 
@@ -6,13 +6,13 @@ const UPLOAD_PRESET = "ml_default";
 let isAdminUnlocked = false;
 let mediaGallery = JSON.parse(localStorage.getItem('sdh_media_assets')) || [];
 
-// Initialize Page
+// Initialize Technical Hub Page
 document.addEventListener('DOMContentLoaded', () => {
   renderGallery();
   updateStats();
 });
 
-// Modal Open / Close Handler (Fixed Touch Bug)
+// Modal Handlers
 function toggleSettingsModal() {
   const modal = document.getElementById('settingsModal');
   if (modal) {
@@ -53,7 +53,7 @@ function closeAuthModal(event) {
   }
 }
 
-// Admin Panel Unlock
+// Admin Lock Toggle
 function toggleAdminAccess() {
   const lockText = document.getElementById('lockText');
   const lockIcon = document.getElementById('lockIcon');
@@ -70,7 +70,7 @@ function toggleAdminAccess() {
         const inputs = uploadForm.querySelectorAll('input, select, button');
         inputs.forEach(input => input.removeAttribute('disabled'));
       }
-      alert("স্বাগতম! অ্যাডমিন প্যানেল আনলক হয়েছে।");
+      alert("স্বাগতম! টেকনিক্যাল প্যানেল আনলক হয়েছে।");
     } else if (password !== null) {
       alert("ভুল পাসওয়ার্ড! সঠিক পাসওয়ার্ড: 1234");
     }
@@ -83,15 +83,15 @@ function toggleAdminAccess() {
       const inputs = uploadForm.querySelectorAll('input, select, button');
       inputs.forEach(input => input.setAttribute('disabled', 'true'));
     }
-    alert("অ্যাডমিন প্যানেল লক করা হয়েছে।");
+    alert("প্যানেল লক করা হয়েছে।");
   }
 }
 
-// Cloudinary Direct Upload
+// Upload Media Asset to Cloudinary
 async function handleUpload(event) {
   event.preventDefault();
   if (!isAdminUnlocked) {
-    alert("প্রথমে অ্যাডমিন প্যানেল আনলক করুন!");
+    alert("প্রথমে প্যানেল আনলক করুন!");
     return;
   }
 
@@ -138,20 +138,20 @@ async function handleUpload(event) {
       updateStats();
       document.getElementById('uploadForm').reset();
       closeSettingsModalDirect();
-      alert("🎉 সফলভাবে আপলোড হয়েছে!");
+      alert("🎉 সফলভাবে টেকনিক্যাল হাবে আপলোড হয়েছে!");
     } else {
-      alert("আপলোড ব্যর্থ হয়েছে! Cloudinary Preset চেক করুন।");
+      alert("আপলোড ব্যর্থ হয়েছে! ক্লাউডিনারী প্রিসেট চেক করুন।");
     }
   } catch (error) {
     console.error("Upload error:", error);
-    alert("আপলোডে সমস্যা হয়েছে!");
+    alert("আপলোডে সমস্যা হয়েছে!");
   } finally {
     submitBtn.disabled = false;
     submitBtn.innerText = "Publish Asset";
   }
 }
 
-// Render Media Grid
+// Render Gallery Elements
 function renderGallery(filter = 'all') {
   const grid = document.getElementById('galleryGrid');
   if (!grid) return;
@@ -163,7 +163,7 @@ function renderGallery(filter = 'all') {
   });
 
   if (filteredData.length === 0) {
-    grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub); padding: 40px;">কোনো মিডিয়া ফাইল নেই। গিয়ার আইকনে চাপ দিয়ে আপলোড করুন!</p>`;
+    grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub); padding: 40px;">টেকনিক্যাল হাবে কোনো ফাইল নেই। গিয়ার আইকনে চাপ দিয়ে আপলোড করুন!</p>`;
     return;
   }
 
@@ -188,7 +188,7 @@ function renderGallery(filter = 'all') {
   });
 }
 
-// Filter Categories
+// Filter Options
 function filterCategory(cat, btn) {
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
@@ -204,7 +204,7 @@ function filterMedia() {
   grid.innerHTML = '';
   
   if (filtered.length === 0) {
-    grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub); padding: 40px;">খুঁজে পাওয়া যায়নি!</p>`;
+    grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub); padding: 40px;">খুঁজে পাওয়া যায়নি!</p>`;
     return;
   }
 
@@ -226,7 +226,7 @@ function filterMedia() {
   });
 }
 
-// Update Header Stats
+// Stats Counter
 function updateStats() {
   const photos = mediaGallery.filter(i => i.category === 'photo').length;
   const videos = mediaGallery.filter(i => i.category === 'video').length;
@@ -236,7 +236,7 @@ function updateStats() {
   if (document.getElementById('statDownloads')) document.getElementById('statDownloads').innerText = photos + videos;
 }
 
-// Toggle Theme (Dark / Light)
+// Theme Toggle
 function toggleTheme() {
   if (document.body.getAttribute('data-theme') === 'light') {
     document.body.removeAttribute('data-theme');
@@ -245,15 +245,15 @@ function toggleTheme() {
   }
 }
 
-// Clear Cache
+// Clear Cache Data
 function clearAllData() {
   localStorage.clear();
-  alert("ক্যাশ ক্লিয়ার করা হয়েছে!");
+  alert("ক্যাশ ডাটা রিসেট করা হয়েছে!");
   location.reload();
 }
 
 function handleAuth(e) {
   e.preventDefault();
-  alert("সফলভাবে লগইন হয়েছে!");
+  alert("সফলভাবে লগইন হয়েছে!");
   closeAuthModalDirect();
 }
