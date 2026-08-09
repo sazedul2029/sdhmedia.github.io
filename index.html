@@ -8,7 +8,7 @@
   <meta name="google-site-verification" content="sXnnEZKWIvZap2gsMef_IVOG4vP2ZrC8oZZJZbgeH0o" />
 
   <!-- Primary SEO -->
-  <title>SDH Media Pro | MWM & Bangla Cat Gas Generator Tools Hub</title>
+  <title>SDH Media Pro | MWM & Bangla Cat Gas Generator Technical Hub</title>
   <meta name="title" content="SDH Media Pro | MWM & Bangla Cat Gas Generator Technical Hub">
   <meta name="description" content="Official SDH Media Pro Portal: High-speed MWM & Bangla Cat Gas Generator Technical, premium HD photo/video gallery, and instant downloads.">
   <meta name="keywords" content="SDH Media, MWM, Bangla Cat Gas Generator, SDH Media Pro, Media Hub, HD Downloads">
@@ -19,18 +19,7 @@
   <link rel="shortcut icon" href="sazedul2029.png" type="image/png">
   <link rel="apple-touch-icon" href="sazedul2029.png">
 
-  <!-- Schema Site Name -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "SDH Media Pro",
-    "alternateName": ["SDH Media", "SDH Hub"],
-    "url": "https://sazedul2029.github.io/sdhmedia.github.io/"
-  }
-  </script>
-
-  <!-- External Styles & FontAwesome Icon -->
+  <!-- FontAwesome & CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="./style.css">
 </head>
@@ -46,7 +35,7 @@
   <!-- Navbar -->
   <header class="navbar">
     <div class="logo">
-      <img src="sazedul2029.png" alt="SDH Logo">
+      <img src="sazedul2029.png" alt="SDH Logo" onerror="this.src='https://via.placeholder.com/40'">
       <div class="logo-text">
         <span class="brand-name">SDH Media</span>
         <span class="brand-tag">PRO GALLERY</span>
@@ -61,7 +50,6 @@
     <div class="nav-right">
       <button class="auth-btn" onclick="openAuthModal()"><i class="fa-solid fa-user-plus"></i> <span id="authBtnText">Account</span></button>
       <button class="icon-btn" onclick="toggleSettingsModal()" title="Settings"><i class="fa-solid fa-gear"></i></button>
-      <button class="icon-btn" onclick="toggleLayout()" title="Grid/List"><i class="fa-solid fa-list"></i></button>
       <button class="icon-btn" onclick="toggleTheme()" title="Theme"><i class="fa-solid fa-moon"></i></button>
     </div>
   </header>
@@ -78,7 +66,7 @@
     </div>
     <div class="stat-card">
       <i class="fa-solid fa-download"></i>
-      <div><h4 id="statDownloads">0</h4><p>Downloads</p></div>
+      <div><h4 id="statDownloads">0</h4><p>Total Assets</p></div>
     </div>
   </section>
 
@@ -87,20 +75,19 @@
     <button class="filter-btn active" onclick="filterCategory('all', this)"><i class="fa-solid fa-border-all"></i> All Assets</button>
     <button class="filter-btn" onclick="filterCategory('photo', this)"><i class="fa-solid fa-image"></i> Photos</button>
     <button class="filter-btn" onclick="filterCategory('video', this)"><i class="fa-solid fa-video"></i> Videos</button>
-    <button class="filter-btn" onclick="filterCategory('fav', this)"><i class="fa-solid fa-heart"></i> Favorites ❤️</button>
   </div>
 
   <!-- Gallery Grid -->
   <main class="gallery-grid" id="galleryGrid">
-    <!-- Assets render here -->
+    <!-- Media items render here dynamically -->
   </main>
 
-  <!-- Settings Modal -->
+  <!-- Settings / Admin Modal -->
   <div id="settingsModal" class="modal" onclick="closeSettingsModal(event)">
     <div class="modal-content">
       <span class="modal-close" onclick="closeSettingsModalDirect()">&times;</span>
-      <h2><i class="fa-solid fa-sliders"></i> Admin Control Panel</h2>
-      <p class="modal-sub">Manage platform settings.</p>
+      <h2><i class="fa-solid fa-sliders"></i> Control Panel</h2>
+      <p class="modal-sub">Upload & Manage Cloud Assets</p>
 
       <div class="settings-section">
         <div class="upload-header">
@@ -111,7 +98,7 @@
         </div>
 
         <form id="uploadForm" class="upload-form locked" onsubmit="handleUpload(event)">
-          <h4 style="margin: 10px 0; color: var(--accent-color);"><i class="fa-solid fa-cloud-arrow-up"></i> Upload New Asset</h4>
+          <h4 style="margin: 12px 0 6px 0; color: var(--accent-color);"><i class="fa-solid fa-cloud-arrow-up"></i> Upload to Cloudinary</h4>
           <div class="form-group">
             <input type="text" id="mediaTitle" placeholder="Asset Title..." required disabled>
             <select id="mediaCategory" disabled>
@@ -119,10 +106,10 @@
               <option value="video">Video</option>
             </select>
           </div>
-          <div class="form-group">
+          <div class="form-group" style="margin-top: 10px;">
             <input type="file" id="mediaFile" accept="image/*,video/*" required disabled>
-            <button type="submit" id="submitUploadBtn" class="btn-upload" disabled>
-              <i class="fa-solid fa-cloud-arrow-up"></i> Publish
+            <button type="submit" id="submitUploadBtn" class="btn-upload" disabled style="margin-top: 10px;">
+              <i class="fa-solid fa-cloud-arrow-up"></i> Publish Asset
             </button>
           </div>
         </form>
@@ -132,16 +119,8 @@
 
       <div class="settings-section">
         <h3><i class="fa-solid fa-gears"></i> Preferences</h3>
-        <div class="setting-item">
-          <span><i class="fa-solid fa-volume-high"></i> Video Sound</span>
-          <input type="checkbox" id="autoplayToggle" onchange="toggleAutoplay(this)">
-        </div>
-        <div class="setting-item">
-          <span><i class="fa-solid fa-eye-slash"></i> Hide Views</span>
-          <input type="checkbox" id="hideViewsToggle" onchange="toggleHideViews(this)">
-        </div>
-        <div class="setting-item">
-          <button class="btn-danger-action" onclick="clearAllData()"><i class="fa-solid fa-rotate-left"></i> Purge Local Cache</button>
+        <div class="setting-item" style="margin-top: 10px;">
+          <button class="btn-danger-action" onclick="clearAllData()"><i class="fa-solid fa-rotate-left"></i> Clear Cache</button>
         </div>
       </div>
     </div>
