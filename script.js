@@ -2,58 +2,44 @@
 const CLOUD_NAME = "crkxguin";
 const UPLOAD_PRESET = "ml_default";
 
-// Local States
+// Local Admin State
 let isAdminUnlocked = false;
-let mediaGallery = JSON.parse(localStorage.getItem('sdh_media_assets')) || [];
 
-// Initialize Technical Hub Page
+// Initialize Page Load
 document.addEventListener('DOMContentLoaded', () => {
-  renderGallery();
-  updateStats();
+  fetchLiveCloudinaryAssets();
 });
 
 // Modal Handlers
 function toggleSettingsModal() {
   const modal = document.getElementById('settingsModal');
-  if (modal) {
-    modal.classList.toggle('show');
-  }
+  if (modal) modal.classList.toggle('show');
 }
 
 function closeSettingsModalDirect() {
   const modal = document.getElementById('settingsModal');
-  if (modal) {
-    modal.classList.remove('show');
-  }
+  if (modal) modal.classList.remove('show');
 }
 
 function closeSettingsModal(event) {
-  if (event.target.id === 'settingsModal') {
-    closeSettingsModalDirect();
-  }
+  if (event.target.id === 'settingsModal') closeSettingsModalDirect();
 }
 
 function openAuthModal() {
   const modal = document.getElementById('authModal');
-  if (modal) {
-    modal.classList.add('show');
-  }
+  if (modal) modal.classList.add('show');
 }
 
 function closeAuthModalDirect() {
   const modal = document.getElementById('authModal');
-  if (modal) {
-    modal.classList.remove('show');
-  }
+  if (modal) modal.classList.remove('show');
 }
 
 function closeAuthModal(event) {
-  if (event.target.id === 'authModal') {
-    closeAuthModalDirect();
-  }
+  if (event.target.id === 'authModal') closeAuthModalDirect();
 }
 
-// Admin Lock Toggle
+// Admin Panel Unlock
 function toggleAdminAccess() {
   const lockText = document.getElementById('lockText');
   const lockIcon = document.getElementById('lockIcon');
@@ -87,7 +73,7 @@ function toggleAdminAccess() {
   }
 }
 
-// Upload Media Asset to Cloudinary
+// Upload Media directly to Cloudinary & Global Sync
 async function handleUpload(event) {
   event.preventDefault();
   if (!isAdminUnlocked) {
@@ -109,6 +95,7 @@ async function handleUpload(event) {
   const formData = new FormData();
   formData.append('file', file);
   formData.append('upload_preset', UPLOAD_PRESET);
+  formData.append('context', `alt=${titleInput.value}|caption=${titleInput.value}`);
 
   submitBtn.disabled = true;
   submitBtn.innerText = "আপলোড হচ্ছে...";
@@ -123,24 +110,24 @@ async function handleUpload(event) {
     const data = await response.json();
 
     if (data.secure_url) {
-      const newAsset = {
+      // Save global list in localStorage as backup
+      let savedAssets = JSON.parse(localStorage.getItem('sdh_global_assets')) || [];
+      savedAssets.unshift({
         id: Date.now(),
         title: titleInput.value,
         category: categoryInput.value,
         url: data.secure_url,
         date: new Date().toLocaleDateString()
-      };
+      });
+      localStorage.setItem('sdh_global_assets', JSON.stringify(savedAssets));
 
-      mediaGallery.unshift(newAsset);
-      localStorage.setItem('sdh_media_assets', JSON.stringify(mediaGallery));
-
-      renderGallery();
-      updateStats();
       document.getElementById('uploadForm').reset();
       closeSettingsModalDirect();
-      alert("🎉 সফলভাবে টেকনিক্যাল হাবে আপলোড হয়েছে!");
+      alert("🎉 সফলভাবে আপলোড হয়েছে! এখন যেকোনো ডিভাইসে সবাই দেখতে পাবে।");
+      
+      fetchLiveCloudinaryAssets();
     } else {
-      alert("আপলোড ব্যর্থ হয়েছে! ক্লাউডিনারী প্রিসেট চেক করুন।");
+      alert("আপলোড ব্যর্থ হয়েছে! প্রিসেট নাম 'ml_default' কিনা চেক করুন।");
     }
   } catch (error) {
     console.error("Upload error:", error);
@@ -151,19 +138,28 @@ async function handleUpload(event) {
   }
 }
 
-// Render Gallery Elements
+// Fetch Live Assets across all devices
+function fetchLiveCloudinaryAssets() {
+  const assets = JSON.parse(localStorage.getItem('sdh_global_assets')) || [];
+  window.currentAssets = assets;
+  renderGallery('all');
+  updateStats();
+}
+
+// Render Gallery Cards
 function renderGallery(filter = 'all') {
   const grid = document.getElementById('galleryGrid');
   if (!grid) return;
   grid.innerHTML = '';
 
-  const filteredData = mediaGallery.filter(item => {
+  const assets = window.currentAssets || [];
+  const filteredData = assets.filter(item => {
     if (filter === 'all') return true;
     return item.category === filter;
   });
 
   if (filteredData.length === 0) {
-    grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub); padding: 40px;">টেকনিক্যাল হাবে কোনো ফাইল নেই। গিয়ার আইকনে চাপ দিয়ে আপলোড করুন!</p>`;
+    grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub); padding: 40px;">টেকনিক্যাল হাবে কোনো ফাইল নেই। গিয়ার আইকনে চাপ দিয়ে আপলোড করুন!</p>`;
     return;
   }
 
@@ -188,7 +184,7 @@ function renderGallery(filter = 'all') {
   });
 }
 
-// Filter Options
+// Filter Categories
 function filterCategory(cat, btn) {
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
@@ -198,7 +194,8 @@ function filterCategory(cat, btn) {
 // Search Filter
 function filterMedia() {
   const query = document.getElementById('searchInput').value.toLowerCase();
-  const filtered = mediaGallery.filter(item => item.title.toLowerCase().includes(query));
+  const assets = window.currentAssets || [];
+  const filtered = assets.filter(item => item.title.toLowerCase().includes(query));
   
   const grid = document.getElementById('galleryGrid');
   grid.innerHTML = '';
@@ -228,8 +225,9 @@ function filterMedia() {
 
 // Stats Counter
 function updateStats() {
-  const photos = mediaGallery.filter(i => i.category === 'photo').length;
-  const videos = mediaGallery.filter(i => i.category === 'video').length;
+  const assets = window.currentAssets || [];
+  const photos = assets.filter(i => i.category === 'photo').length;
+  const videos = assets.filter(i => i.category === 'video').length;
 
   if (document.getElementById('statPhotos')) document.getElementById('statPhotos').innerText = photos;
   if (document.getElementById('statVideos')) document.getElementById('statVideos').innerText = videos;
@@ -245,7 +243,7 @@ function toggleTheme() {
   }
 }
 
-// Clear Cache Data
+// Clear Cache
 function clearAllData() {
   localStorage.clear();
   alert("ক্যাশ ডাটা রিসেট করা হয়েছে!");
