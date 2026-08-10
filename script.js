@@ -5,9 +5,9 @@ const UPLOAD_PRESET = "ml_default";
 // Local Admin State
 let isAdminUnlocked = false;
 
-// Initialize Page Load
+// Page Load Event
 document.addEventListener('DOMContentLoaded', () => {
-  fetchLiveCloudinaryAssets();
+  fetchGlobalAssets();
 });
 
 // Modal Handlers
@@ -73,7 +73,7 @@ function toggleAdminAccess() {
   }
 }
 
-// Upload Media directly to Cloudinary & Global Sync
+// Upload Media Asset
 async function handleUpload(event) {
   event.preventDefault();
   if (!isAdminUnlocked) {
@@ -95,7 +95,7 @@ async function handleUpload(event) {
   const formData = new FormData();
   formData.append('file', file);
   formData.append('upload_preset', UPLOAD_PRESET);
-  formData.append('context', `alt=${titleInput.value}|caption=${titleInput.value}`);
+  formData.append('tags', categoryInput.value); // Tagging photo/video
 
   submitBtn.disabled = true;
   submitBtn.innerText = "আপলোড হচ্ছে...";
@@ -110,24 +110,12 @@ async function handleUpload(event) {
     const data = await response.json();
 
     if (data.secure_url) {
-      // Save global list in localStorage as backup
-      let savedAssets = JSON.parse(localStorage.getItem('sdh_global_assets')) || [];
-      savedAssets.unshift({
-        id: Date.now(),
-        title: titleInput.value,
-        category: categoryInput.value,
-        url: data.secure_url,
-        date: new Date().toLocaleDateString()
-      });
-      localStorage.setItem('sdh_global_assets', JSON.stringify(savedAssets));
-
       document.getElementById('uploadForm').reset();
       closeSettingsModalDirect();
-      alert("🎉 সফলভাবে আপলোড হয়েছে! এখন যেকোনো ডিভাইসে সবাই দেখতে পাবে।");
-      
-      fetchLiveCloudinaryAssets();
+      alert("🎉 সফলভাবে ক্লাউডে আপলোড হয়েছে!");
+      setTimeout(() => fetchGlobalAssets(), 1000);
     } else {
-      alert("আপলোড ব্যর্থ হয়েছে! প্রিসেট নাম 'ml_default' কিনা চেক করুন।");
+      alert("আপলোড ব্যর্থ হয়েছে! প্রিসেট নাম চেক করুন।");
     }
   } catch (error) {
     console.error("Upload error:", error);
@@ -138,25 +126,57 @@ async function handleUpload(event) {
   }
 }
 
-// Fetch Live Assets across all devices
-function fetchLiveCloudinaryAssets() {
-  const assets = JSON.parse(localStorage.getItem('sdh_global_assets')) || [];
-  window.currentAssets = assets;
-  renderGallery('all');
-  updateStats();
+// Fetch Assets from Cloudinary globally
+async function fetchGlobalAssets() {
+  const grid = document.getElementById('galleryGrid');
+  if (grid) grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub); padding: 40px;">লোড হচ্ছে...</p>`;
+
+  try {
+    // Fetch images and videos by tags
+    const imgRes = await fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/photo.json`).catch(() => null);
+    const vidRes = await fetch(`https://res.cloudinary.com/${CLOUD_NAME}/video/list/video.json`).catch(() => null);
+
+    let assets = [];
+
+    if (imgRes && imgRes.ok) {
+      const imgData = await imgRes.json();
+      const images = imgData.resources.map(r => ({
+        id: r.public_id,
+        title: r.public_id.split('/')[0],
+        category: 'photo',
+        url: `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/v${r.version}/${r.public_id}.${r.format}`
+      }));
+      assets = assets.concat(images);
+    }
+
+    if (vidRes && vidRes.ok) {
+      const vidData = await vidRes.json();
+      const videos = vidData.resources.map(r => ({
+        id: r.public_id,
+        title: r.public_id.split('/')[0],
+        category: 'video',
+        url: `https://res.cloudinary.com/${CLOUD_NAME}/video/upload/v${r.version}/${r.public_id}.${r.format}`
+      }));
+      assets = assets.concat(videos);
+    }
+
+    window.currentAssets = assets;
+    renderGallery('all');
+    updateStats();
+  } catch (err) {
+    console.error("Error fetching assets:", err);
+    renderGallery('all');
+  }
 }
 
-// Render Gallery Cards
+// Render Gallery
 function renderGallery(filter = 'all') {
   const grid = document.getElementById('galleryGrid');
   if (!grid) return;
   grid.innerHTML = '';
 
   const assets = window.currentAssets || [];
-  const filteredData = assets.filter(item => {
-    if (filter === 'all') return true;
-    return item.category === filter;
-  });
+  const filteredData = assets.filter(item => filter === 'all' || item.category === filter);
 
   if (filteredData.length === 0) {
     grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub); padding: 40px;">টেকনিক্যাল হাবে কোনো ফাইল নেই। গিয়ার আইকনে চাপ দিয়ে আপলোড করুন!</p>`;
@@ -184,14 +204,12 @@ function renderGallery(filter = 'all') {
   });
 }
 
-// Filter Categories
 function filterCategory(cat, btn) {
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   renderGallery(cat);
 }
 
-// Search Filter
 function filterMedia() {
   const query = document.getElementById('searchInput').value.toLowerCase();
   const assets = window.currentAssets || [];
@@ -208,9 +226,7 @@ function filterMedia() {
   filtered.forEach(item => {
     const card = document.createElement('div');
     card.className = 'media-card';
-    const mediaElement = item.category === 'video' 
-      ? `<video src="${item.url}" controls></video>`
-      : `<img src="${item.url}">`;
+    const mediaElement = item.category === 'video' ? `<video src="${item.url}" controls></video>` : `<img src="${item.url}">`;
 
     card.innerHTML = `
       ${mediaElement}
@@ -223,7 +239,6 @@ function filterMedia() {
   });
 }
 
-// Stats Counter
 function updateStats() {
   const assets = window.currentAssets || [];
   const photos = assets.filter(i => i.category === 'photo').length;
@@ -234,7 +249,6 @@ function updateStats() {
   if (document.getElementById('statDownloads')) document.getElementById('statDownloads').innerText = photos + videos;
 }
 
-// Theme Toggle
 function toggleTheme() {
   if (document.body.getAttribute('data-theme') === 'light') {
     document.body.removeAttribute('data-theme');
@@ -243,7 +257,6 @@ function toggleTheme() {
   }
 }
 
-// Clear Cache
 function clearAllData() {
   localStorage.clear();
   alert("ক্যাশ ডাটা রিসেট করা হয়েছে!");
