@@ -12,18 +12,11 @@
   <meta name="title" content="SDH Media Pro | MWM & Bangla Cat Gas Generator Technical Hub">
   <meta name="description" content="Official SDH Media Pro Portal: High-speed MWM & Bangla Cat Gas Generator Technical Hub, premium HD photo/video gallery, and instant downloads.">
 
-  <!-- Google & Browser Favicon / Logo Setup -->
+  <!-- Favicon / Logo Setup -->
   <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="favicon.png">
   <link rel="shortcut icon" type="image/png" href="favicon.png">
-
-  <!-- Open Graph / Social Media Preview Tags -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://sazedul2029.github.io/">
-  <meta property="og:title" content="SDH Media Pro | MWM & Bangla Cat Gas Generator Technical Hub">
-  <meta property="og:description" content="Official SDH Media Pro Portal: High-speed MWM & Bangla Cat Gas Generator Technical Hub and HD asset gallery.">
-  <meta property="og:image" content="https://sazedul2029.github.io/favicon.png">
 
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -33,14 +26,14 @@
 </head>
 <body>
 
-  <!-- Marquee Banner -->
+  <!-- Top Marquee Banner -->
   <div class="top-bar">
     <div class="marquee-track">
       🔥 Welcome to SDH Media Pro Portal! Official MWM & Bangla Cat Gas Generator Technical Hub & HD Assets Available!
     </div>
   </div>
 
-  <!-- Navigation Bar -->
+  <!-- Navbar -->
   <header class="navbar">
     <div class="logo">
       <img src="sazedul2029.png" alt="SDH Media Logo" id="navLogo">
@@ -59,6 +52,33 @@
       <button class="auth-btn" onclick="openAuthModal()">
         <i class="fa-solid fa-user-plus"></i> Account
       </button>
+
+      <!-- Three-Dot Menu Trigger -->
+      <div class="menu-dropdown-container">
+        <button class="icon-btn" onclick="toggleStatsMenu()">
+          <i class="fa-solid fa-ellipsis-vertical"></i>
+        </button>
+
+        <!-- Dropdown Content for Stats & Filters -->
+        <div id="statsDropdown" class="stats-dropdown">
+          <div class="dropdown-header">Overview & Filters</div>
+          
+          <div class="mini-stats">
+            <div class="stat-item"><i class="fa-solid fa-image"></i> Photos: <b id="statPhotos">0</b></div>
+            <div class="stat-item"><i class="fa-solid fa-video"></i> Videos: <b id="statVideos">0</b></div>
+            <div class="stat-item"><i class="fa-solid fa-download"></i> Total Assets: <b id="statDownloads">0</b></div>
+          </div>
+
+          <hr class="dropdown-divider">
+
+          <div class="dropdown-filters">
+            <button class="filter-btn active" onclick="filterCategory('all', this)">All Assets</button>
+            <button class="filter-btn" onclick="filterCategory('photo', this)">Photos</button>
+            <button class="filter-btn" onclick="filterCategory('video', this)">Videos</button>
+          </div>
+        </div>
+      </div>
+
       <button class="icon-btn" onclick="toggleSettingsModal()">
         <i class="fa-solid fa-gear"></i>
       </button>
@@ -68,47 +88,36 @@
     </div>
   </header>
 
-  <!-- Stats Bar -->
-  <div class="stats-banner">
-    <div class="stat-card">
-      <i class="fa-solid fa-image"></i>
-      <div>
-        <h3 id="statPhotos">0</h3>
-        <p>Photos</p>
+  <!-- Hero Feature Sections (Liyu Power Style) -->
+  <section class="hero-banners">
+    <!-- Banner 1 -->
+    <div class="hero-card hero-bg-1">
+      <div class="hero-overlay">
+        <h2>SDH Media Technical Hub</h2>
+        <p>Leading the Way in Green Zero-Carbon Gas & Power Solutions</p>
       </div>
     </div>
-    <div class="stat-card">
-      <i class="fa-solid fa-video"></i>
-      <div>
-        <h3 id="statVideos">0</h3>
-        <p>Videos</p>
-      </div>
-    </div>
-    <div class="stat-card">
-      <i class="fa-solid fa-download"></i>
-      <div>
-        <h3 id="statDownloads">0</h3>
-        <p>Total Assets</p>
-      </div>
-    </div>
-  </div>
 
-  <!-- Filter Buttons -->
-  <div class="filter-container">
-    <button class="filter-btn active" onclick="filterCategory('all', this)">
-      <i class="fa-solid fa-border-all"></i> All Assets
-    </button>
-    <button class="filter-btn" onclick="filterCategory('photo', this)">
-      <i class="fa-solid fa-image"></i> Photos
-    </button>
-    <button class="filter-btn" onclick="filterCategory('video', this)">
-      <i class="fa-solid fa-video"></i> Videos
-    </button>
-  </div>
+    <!-- Banner 2 -->
+    <div class="hero-card hero-bg-2">
+      <div class="hero-overlay">
+        <h2>Energy Solutions</h2>
+        <p>Innovative and sustainable power generation and technical support</p>
+      </div>
+    </div>
 
-  <!-- Gallery Grid -->
+    <!-- Banner 3 -->
+    <div class="hero-card hero-bg-3">
+      <div class="hero-overlay">
+        <h2>Energy Efficiency & Environment</h2>
+        <p>Integrated service model offering consistent eco-friendly support</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Media Gallery Grid -->
   <main id="galleryGrid" class="gallery-grid">
-    <!-- Dynamic Content Loaded via JS -->
+    <!-- Dynamic Assets via JS -->
   </main>
 
   <!-- Settings / Upload Modal -->
@@ -164,7 +173,6 @@
     <p>&copy; 2026 SDH Media — MWM & Bangla Cat Gas Generator Technical Hub. All Rights Reserved.</p>
   </footer>
 
-  <!-- Script JS Link -->
   <script src="script.js"></script>
 </body>
 </html>
