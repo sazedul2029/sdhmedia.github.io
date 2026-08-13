@@ -39,6 +39,21 @@ function closeAuthModal(event) {
   if (event.target.id === 'authModal') closeAuthModalDirect();
 }
 
+// Three-Dot Menu Dropdown Toggle
+function toggleStatsMenu() {
+  const dropdown = document.getElementById('statsDropdown');
+  if (dropdown) dropdown.classList.toggle('show');
+}
+
+// Close Dropdown when clicking outside
+window.addEventListener('click', function(e) {
+  const dropdown = document.getElementById('statsDropdown');
+  const menuBtn = e.target.closest('.menu-dropdown-container');
+  if (dropdown && !menuBtn) {
+    dropdown.classList.remove('show');
+  }
+});
+
 // Admin Panel Unlock
 function toggleAdminAccess() {
   const lockText = document.getElementById('lockText');
@@ -126,7 +141,7 @@ async function handleUpload(event) {
   }
 }
 
-// Fetch Assets from Cloudinary with f_auto,q_auto Optimization
+// Fetch Assets with Auto Optimization (f_auto, q_auto)
 async function fetchGlobalAssets() {
   const grid = document.getElementById('galleryGrid');
   if (grid) grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub); padding: 40px;">লোড হচ্ছে...</p>`;
@@ -143,7 +158,6 @@ async function fetchGlobalAssets() {
         id: r.public_id,
         title: r.public_id.split('/')[0],
         category: 'photo',
-        // f_auto,q_auto যুক্ত করে সাইজ ছোট করার অটো-অপ্টিমাইজেশন
         url: `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/f_auto,q_auto/v${r.version}/${r.public_id}.${r.format}`
       }));
       assets = assets.concat(images);
@@ -155,7 +169,6 @@ async function fetchGlobalAssets() {
         id: r.public_id,
         title: r.public_id.split('/')[0],
         category: 'video',
-        // ভিডিওর জন্যও অটো অপ্টিমাইজেশন
         url: `https://res.cloudinary.com/${CLOUD_NAME}/video/upload/f_auto,q_auto/v${r.version}/${r.public_id}.${r.format}`
       }));
       assets = assets.concat(videos);
@@ -170,7 +183,7 @@ async function fetchGlobalAssets() {
   }
 }
 
-// Render Gallery
+// Render Gallery Cards
 function renderGallery(filter = 'all') {
   const grid = document.getElementById('galleryGrid');
   if (!grid) return;
