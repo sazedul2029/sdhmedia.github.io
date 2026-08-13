@@ -95,7 +95,7 @@ async function handleUpload(event) {
   const formData = new FormData();
   formData.append('file', file);
   formData.append('upload_preset', UPLOAD_PRESET);
-  formData.append('tags', categoryInput.value); // Tagging photo/video
+  formData.append('tags', categoryInput.value);
 
   submitBtn.disabled = true;
   submitBtn.innerText = "আপলোড হচ্ছে...";
@@ -126,13 +126,12 @@ async function handleUpload(event) {
   }
 }
 
-// Fetch Assets from Cloudinary globally
+// Fetch Assets from Cloudinary with f_auto,q_auto Optimization
 async function fetchGlobalAssets() {
   const grid = document.getElementById('galleryGrid');
   if (grid) grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub); padding: 40px;">লোড হচ্ছে...</p>`;
 
   try {
-    // Fetch images and videos by tags
     const imgRes = await fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/photo.json`).catch(() => null);
     const vidRes = await fetch(`https://res.cloudinary.com/${CLOUD_NAME}/video/list/video.json`).catch(() => null);
 
@@ -144,7 +143,8 @@ async function fetchGlobalAssets() {
         id: r.public_id,
         title: r.public_id.split('/')[0],
         category: 'photo',
-        url: `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/v${r.version}/${r.public_id}.${r.format}`
+        // f_auto,q_auto যুক্ত করে সাইজ ছোট করার অটো-অপ্টিমাইজেশন
+        url: `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/f_auto,q_auto/v${r.version}/${r.public_id}.${r.format}`
       }));
       assets = assets.concat(images);
     }
@@ -155,7 +155,8 @@ async function fetchGlobalAssets() {
         id: r.public_id,
         title: r.public_id.split('/')[0],
         category: 'video',
-        url: `https://res.cloudinary.com/${CLOUD_NAME}/video/upload/v${r.version}/${r.public_id}.${r.format}`
+        // ভিডিওর জন্যও অটো অপ্টিমাইজেশন
+        url: `https://res.cloudinary.com/${CLOUD_NAME}/video/upload/f_auto,q_auto/v${r.version}/${r.public_id}.${r.format}`
       }));
       assets = assets.concat(videos);
     }
