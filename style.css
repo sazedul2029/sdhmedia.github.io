@@ -77,15 +77,15 @@
 }
 
 .hero-bg-1 {
-  background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('hero1.jpg');
+  background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('hero1.png');
   background-color: #0f172a;
 }
 .hero-bg-2 {
-  background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('hero2.jpg');
+  background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('hero2.png');
   background-color: #1e293b;
 }
 .hero-bg-3 {
-  background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('hero3.jpg');
+  background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('hero3.png');
   background-color: #0d9488;
 }
 
