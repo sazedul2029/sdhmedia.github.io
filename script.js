@@ -4,22 +4,6 @@ const UPLOAD_PRESET = "ml_default";
 
 let isAdminUnlocked = false;
 
-// ১. গ্লোবাল টেকনিক্যাল নোটস (সব ফোনে একইভাবে দেখাবে)
-const globalSystemNotes = {
-  mechanical: [
-    "Gas Engine Preventive Maintenance Checklist Completed",
-    "Lube oil analysis report updated for SDH-1 Unit"
-  ],
-  electrical: [
-    "Transformer HT & LT Panel inspection verified",
-    "Substation Earth Resistance test normal"
-  ],
-  power: [
-    "Zero-Carbon Hybrid Grid synchronization test active",
-    "Total Eco-Power Generation status logged"
-  ]
-};
-
 document.addEventListener('DOMContentLoaded', () => {
   fetchGlobalAssets();
   renderAllSystemNotes();
@@ -115,7 +99,7 @@ async function handleUpload(event) {
     return;
   }
 
-  const categoryInput = document.getElementById('mediaCategory').value; // 'home', 'sdh_hub', 'ecotec', 'energy_env'
+  const categoryInput = document.getElementById('mediaCategory').value;
   const fileInput = document.getElementById('mediaFile');
   const submitBtn = document.getElementById('submitUploadBtn');
 
@@ -192,7 +176,7 @@ async function fetchGlobalAssets() {
   updateStats();
 }
 
-// Render Main Home Gallery (শুধুমাত্র 'home' ট্যাগ দেওয়া ছবিগুলো এখানে দেখাবে)
+// Render Main Home Gallery
 function renderMainHomeGallery() {
   const grid = document.getElementById('galleryGrid');
   if (!grid) return;
@@ -224,7 +208,7 @@ function renderMainHomeGallery() {
   });
 }
 
-// Render Inside Banner Gallery (নির্দিষ্ট ব্যানারের ছবিগুলো কেবল ব্যানারের ভেতরে দেখাবে)
+// Render Inside Banner Gallery
 function renderBannerGalleryGrid(categoryKey) {
   const grid = document.getElementById('bannerGalleryGrid');
   if (!grid) return;
@@ -255,23 +239,78 @@ function renderBannerGalleryGrid(categoryKey) {
   }
 }
 
-// System Notes List Render
+// ==================== SYSTEM NOTES FUNCTIONALITY (WORKING NOW) ====================
+function addSystemNote(type) {
+  if (!isAdminUnlocked) {
+    alert("Please unlock Admin Panel first to add notes!");
+    return;
+  }
+
+  const inputEl = document.getElementById(`${type}Input`);
+  if (!inputEl) return;
+  const text = inputEl.value.trim();
+
+  if (!text) {
+    alert("Please enter a note before adding!");
+    return;
+  }
+
+  const existingNotes = JSON.parse(localStorage.getItem(`notes_${type}`) || '[]');
+  existingNotes.push({ text: text, date: new Date().toLocaleDateString() });
+
+  localStorage.setItem(`notes_${type}`, JSON.stringify(existingNotes));
+  inputEl.value = '';
+  renderSystemNoteList(type);
+}
+
+function deleteSingleNote(type, index) {
+  if (!isAdminUnlocked) {
+    alert("Admin access required to delete notes!");
+    return;
+  }
+
+  if (confirm("Delete this note?")) {
+    let existingNotes = JSON.parse(localStorage.getItem(`notes_${type}`) || '[]');
+    existingNotes.splice(index, 1);
+    localStorage.setItem(`notes_${type}`, JSON.stringify(existingNotes));
+    renderSystemNoteList(type);
+  }
+}
+
+function clearSystemNotes(type) {
+  if (!isAdminUnlocked) {
+    alert("Admin access required!");
+    return;
+  }
+
+  if (confirm(`Clear ALL notes in ${type}?`)) {
+    localStorage.removeItem(`notes_${type}`);
+    renderSystemNoteList(type);
+  }
+}
+
 function renderSystemNoteList(type) {
   const displayEl = document.getElementById(`${type}DisplayList`);
   if (!displayEl) return;
 
-  const notes = globalSystemNotes[type] || [];
+  const notes = JSON.parse(localStorage.getItem(`notes_${type}`) || '[]');
 
   if (notes.length === 0) {
-    displayEl.innerHTML = `<p style="color: #777; font-style: italic; font-size: 12px; margin: 0;">No technical documentation published yet.</p>`;
+    displayEl.innerHTML = `<p style="color: #777; font-style: italic; font-size: 12px; margin: 0;">No technical notes added yet.</p>`;
     return;
   }
 
   let html = '<ul style="margin: 0; padding-left: 18px; list-style-type: square;">';
-  notes.forEach((item) => {
+  notes.forEach((item, index) => {
     html += `
       <li style="margin-bottom: 8px; font-size: 13px;">
-        <span>${item}</span>
+        <span>${item.text}</span>
+        <span style="font-size: 10px; opacity: 0.6; display: block; margin-top: 2px;">📅 ${item.date}</span>
+        ${isAdminUnlocked ? `
+          <button onclick="deleteSingleNote('${type}', ${index})" style="background: none; border: none; color: #ff4d4d; cursor: pointer; font-size: 11px; padding: 0; text-decoration: underline;">
+            Delete
+          </button>
+        ` : ''}
       </li>
     `;
   });
