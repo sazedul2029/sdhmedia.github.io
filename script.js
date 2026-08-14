@@ -1,8 +1,24 @@
 // Cloudinary Configuration
 const CLOUD_NAME = "crkxguin";
-const UPLOAD_PRESET = "ml_default"; // স্টেপ ১ এর প্রিসেট নেম
+const UPLOAD_PRESET = "ml_default"; 
 
 let isAdminUnlocked = false;
+
+// ১. গ্লোবাল টেকনিক্যাল নোটস (সব ফোনে একইভাবে দেখাবে)
+const globalSystemNotes = {
+  mechanical: [
+    "Gas Engine Preventive Maintenance Checklist Completed",
+    "Lube oil analysis report updated for SDH-1 Unit"
+  ],
+  electrical: [
+    "Transformer HT & LT Panel inspection verified",
+    "Substation Earth Resistance test normal"
+  ],
+  power: [
+    "Zero-Carbon Hybrid Grid synchronization test active",
+    "Total Eco-Power Generation status logged"
+  ]
+};
 
 document.addEventListener('DOMContentLoaded', () => {
   fetchGlobalAssets();
@@ -73,7 +89,7 @@ function toggleAdminAccess() {
       renderAllSystemNotes();
       refreshCurrentGalleryView();
     } else if (password !== null) {
-      alert("Access Denied! Incorrect Admin Secret Key.");
+      alert("Access Denied! Incorrect Secret Key.");
     }
   } else {
     isAdminUnlocked = false;
@@ -99,7 +115,7 @@ async function handleUpload(event) {
     return;
   }
 
-  const categoryInput = document.getElementById('mediaCategory').value;
+  const categoryInput = document.getElementById('mediaCategory').value; // 'home', 'sdh_hub', 'ecotec', 'energy_env'
   const fileInput = document.getElementById('mediaFile');
   const submitBtn = document.getElementById('submitUploadBtn');
 
@@ -134,83 +150,63 @@ async function handleUpload(event) {
       alert("🎉 Asset published successfully!");
       setTimeout(() => fetchGlobalAssets(), 1500);
     } else {
-      alert("Upload failed! Please ensure 'ml_default' Unsigned Upload Preset is set in Cloudinary.");
+      alert("Upload failed! Make sure 'ml_default' preset is set to Unsigned in Cloudinary.");
     }
   } catch (error) {
     console.error("Upload error:", error);
-    alert("Error uploading asset! Check internet or configuration.");
+    alert("Error uploading asset!");
   } finally {
     submitBtn.disabled = false;
     submitBtn.innerText = "Publish Asset";
   }
 }
 
-// Delete Asset Function (Hide from UI)
-function deleteAsset(id) {
-  if (!isAdminUnlocked) {
-    alert("Admin access required to delete assets!");
-    return;
-  }
-
-  if (confirm("Are you sure you want to remove this asset from website view?")) {
-    window.currentAssets = window.currentAssets.filter(item => item.id !== id);
-    const deletedList = JSON.parse(localStorage.getItem('deletedAssets') || '[]');
-    deletedList.push(id);
-    localStorage.setItem('deletedAssets', JSON.stringify(deletedList));
-    alert("Asset removed!");
-    refreshCurrentGalleryView();
-    updateStats();
-  }
-}
-
-// Fetch Assets directly from Cloudinary
+// Fetch Assets from Cloudinary
 async function fetchGlobalAssets() {
   const grid = document.getElementById('galleryGrid');
   if (grid) grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub, #888); padding: 40px;">Loading technical assets...</p>`;
 
-  const categories = ['sdh_hub', 'ecotec', 'energy_env'];
+  const categories = ['home', 'sdh_hub', 'ecotec', 'energy_env'];
   let assets = [];
-  const deletedAssets = JSON.parse(localStorage.getItem('deletedAssets') || '[]');
 
   for (const cat of categories) {
     try {
       const res = await fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/${cat}.json?timestamp=${new Date().getTime()}`).catch(() => null);
       if (res && res.ok) {
         const data = await res.json();
-        const items = data.resources
-          .filter(r => !deletedAssets.includes(r.public_id))
-          .map(r => ({
-            id: r.public_id,
-            title: r.public_id.split('/')[0],
-            category: cat,
-            url: `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/f_auto,q_auto/v${r.version}/${r.public_id}.${r.format}`
-          }));
+        const items = data.resources.map(r => ({
+          id: r.public_id,
+          title: r.public_id.split('/')[0],
+          category: cat,
+          url: `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/f_auto,q_auto/v${r.version}/${r.public_id}.${r.format}`
+        }));
         assets = assets.concat(items);
       }
     } catch (e) {
-      console.log("No images in " + cat);
+      console.log("No images in category: " + cat);
     }
   }
 
   window.currentAssets = assets;
-  renderMainHomeGallery();
+  refreshCurrentGalleryView();
   updateStats();
 }
 
-// Render Main Home Gallery
+// Render Main Home Gallery (শুধুমাত্র 'home' ট্যাগ দেওয়া ছবিগুলো এখানে দেখাবে)
 function renderMainHomeGallery() {
   const grid = document.getElementById('galleryGrid');
   if (!grid) return;
   grid.innerHTML = '';
 
   const assets = window.currentAssets || [];
+  const homeAssets = assets.filter(item => item.category === 'home');
 
-  if (assets.length === 0) {
-    grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub, #888); padding: 40px;">No technical assets available.</p>`;
+  if (homeAssets.length === 0) {
+    grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub, #888); padding: 40px;">No general assets uploaded to Home gallery yet.</p>`;
     return;
   }
 
-  assets.forEach(item => {
+  homeAssets.forEach(item => {
     const card = document.createElement('div');
     card.className = 'media-card';
     card.innerHTML = `
@@ -221,11 +217,6 @@ function renderMainHomeGallery() {
           <a href="${item.url}" target="_blank" download class="download-link" style="flex:1;">
             <i class="fa-solid fa-download"></i> Download
           </a>
-          ${isAdminUnlocked ? `
-            <button onclick="deleteAsset('${item.id}')" style="background:#ff3366; color:#fff; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:bold;">
-              <i class="fa-solid fa-trash"></i> Delete
-            </button>
-          ` : ''}
         </div>
       </div>
     `;
@@ -233,60 +224,43 @@ function renderMainHomeGallery() {
   });
 }
 
-// System Notes Manager
-function addSystemNote(type) {
-  if (!isAdminUnlocked) {
-    alert("Admin access required to add notes!");
-    return;
-  }
+// Render Inside Banner Gallery (নির্দিষ্ট ব্যানারের ছবিগুলো কেবল ব্যানারের ভেতরে দেখাবে)
+function renderBannerGalleryGrid(categoryKey) {
+  const grid = document.getElementById('bannerGalleryGrid');
+  if (!grid) return;
 
-  const inputEl = document.getElementById(`${type}Input`);
-  const text = inputEl.value.trim();
+  const assets = window.currentAssets || [];
+  const filtered = assets.filter(item => item.category === categoryKey);
 
-  if (!text) {
-    alert("Please write something before adding!");
-    return;
-  }
-
-  const existingNotes = JSON.parse(localStorage.getItem(`notes_${type}`) || '[]');
-  existingNotes.push({ text, date: new Date().toLocaleDateString() });
-
-  localStorage.setItem(`notes_${type}`, JSON.stringify(existingNotes));
-  inputEl.value = '';
-  renderSystemNoteList(type);
-}
-
-function deleteSingleNote(type, index) {
-  if (!isAdminUnlocked) {
-    alert("Admin access required to delete notes!");
-    return;
-  }
-
-  if (confirm("Delete this specific note?")) {
-    let existingNotes = JSON.parse(localStorage.getItem(`notes_${type}`) || '[]');
-    existingNotes.splice(index, 1);
-    localStorage.setItem(`notes_${type}`, JSON.stringify(existingNotes));
-    renderSystemNoteList(type);
+  grid.innerHTML = '';
+  if (filtered.length === 0) {
+    grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub, #888); padding: 40px;">No assets uploaded inside this category yet!</p>`;
+  } else {
+    filtered.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'media-card';
+      card.innerHTML = `
+        <img src="${item.url}" alt="${item.title}" loading="lazy">
+        <div class="card-details">
+          <div class="card-title">${item.title}</div>
+          <div style="display: flex; gap: 8px; margin-top: 8px;">
+            <a href="${item.url}" target="_blank" download class="download-link" style="flex:1;">
+              <i class="fa-solid fa-download"></i> Download
+            </a>
+          </div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
   }
 }
 
-function clearSystemNotes(type) {
-  if (!isAdminUnlocked) {
-    alert("Admin access required!");
-    return;
-  }
-
-  if (confirm(`Clear ALL notes in ${type} category?`)) {
-    localStorage.removeItem(`notes_${type}`);
-    renderSystemNoteList(type);
-  }
-}
-
+// System Notes List Render
 function renderSystemNoteList(type) {
   const displayEl = document.getElementById(`${type}DisplayList`);
   if (!displayEl) return;
 
-  const notes = JSON.parse(localStorage.getItem(`notes_${type}`) || '[]');
+  const notes = globalSystemNotes[type] || [];
 
   if (notes.length === 0) {
     displayEl.innerHTML = `<p style="color: #777; font-style: italic; font-size: 12px; margin: 0;">No technical documentation published yet.</p>`;
@@ -294,16 +268,10 @@ function renderSystemNoteList(type) {
   }
 
   let html = '<ul style="margin: 0; padding-left: 18px; list-style-type: square;">';
-  notes.forEach((item, index) => {
+  notes.forEach((item) => {
     html += `
-      <li style="margin-bottom: 8px;">
-        <span>${item.text}</span>
-        <span style="font-size: 10px; opacity: 0.6; display: block; margin-top: 2px;">📅 ${item.date}</span>
-        ${isAdminUnlocked ? `
-          <button onclick="deleteSingleNote('${type}', ${index})" style="background: none; border: none; color: #ff4d4d; cursor: pointer; font-size: 11px; padding: 0; margin-top: 2px; text-decoration: underline;">
-            Delete
-          </button>
-        ` : ''}
+      <li style="margin-bottom: 8px; font-size: 13px;">
+        <span>${item}</span>
       </li>
     `;
   });
@@ -316,7 +284,7 @@ function renderAllSystemNotes() {
   ['mechanical', 'electrical', 'power'].forEach(type => renderSystemNoteList(type));
 }
 
-// Enter Inside Banner Page Mode
+// Enter Banner Page Mode
 function enterBannerPage(categoryKey) {
   window.currentActiveCategory = categoryKey;
   const mainHomeView = document.getElementById('mainHomeView');
@@ -360,43 +328,8 @@ function enterBannerPage(categoryKey) {
   if (dropdown) dropdown.classList.remove('show');
 }
 
-function renderBannerGalleryGrid(categoryKey) {
-  const grid = document.getElementById('bannerGalleryGrid');
-  if (!grid) return;
-
-  const assets = window.currentAssets || [];
-  const filtered = assets.filter(item => item.category === categoryKey);
-
-  grid.innerHTML = '';
-  if (filtered.length === 0) {
-    grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub, #888); padding: 40px;">No assets uploaded inside this category yet!</p>`;
-  } else {
-    filtered.forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'media-card';
-      card.innerHTML = `
-        <img src="${item.url}" alt="${item.title}" loading="lazy">
-        <div class="card-details">
-          <div class="card-title">${item.title}</div>
-          <div style="display: flex; gap: 8px; margin-top: 8px;">
-            <a href="${item.url}" target="_blank" download class="download-link" style="flex:1;">
-              <i class="fa-solid fa-download"></i> Download
-            </a>
-            ${isAdminUnlocked ? `
-              <button onclick="deleteAsset('${item.id}')" style="background:#ff3366; color:#fff; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:bold;">
-                <i class="fa-solid fa-trash"></i> Delete
-              </button>
-            ` : ''}
-          </div>
-        </div>
-      `;
-      grid.appendChild(card);
-    });
-  }
-}
-
 function refreshCurrentGalleryView() {
-  const isBannerView = document.getElementById('bannerPageView').style.display === 'block';
+  const isBannerView = document.getElementById('bannerPageView') && document.getElementById('bannerPageView').style.display === 'block';
   if (isBannerView && window.currentActiveCategory) {
     renderBannerGalleryGrid(window.currentActiveCategory);
   } else {
@@ -404,7 +337,6 @@ function refreshCurrentGalleryView() {
   }
 }
 
-// Return to Main Home
 function openMainHomeView() {
   window.currentActiveCategory = null;
   document.getElementById('bannerPageView').style.display = 'none';
@@ -417,24 +349,20 @@ function filterMedia() {
   const assets = window.currentAssets || [];
   const filtered = assets.filter(item => item.title.toLowerCase().includes(query));
   
-  const isBannerView = document.getElementById('bannerPageView').style.display === 'block';
+  const isBannerView = document.getElementById('bannerPageView') && document.getElementById('bannerPageView').style.display === 'block';
   const grid = isBannerView ? document.getElementById('bannerGalleryGrid') : document.getElementById('galleryGrid');
   
+  if (!grid) return;
   grid.innerHTML = '';
   filtered.forEach(item => {
     const card = document.createElement('div');
     card.className = 'media-card';
     card.innerHTML = `
-      <img src="${item.url}">
+      <img src="${item.url}" alt="${item.title}">
       <div class="card-details">
         <div class="card-title">${item.title}</div>
         <div style="display: flex; gap: 8px; margin-top: 8px;">
           <a href="${item.url}" target="_blank" class="download-link" style="flex:1;"><i class="fa-solid fa-download"></i> Download</a>
-          ${isAdminUnlocked ? `
-            <button onclick="deleteAsset('${item.id}')" style="background:#ff3366; color:#fff; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:bold;">
-              <i class="fa-solid fa-trash"></i> Delete
-            </button>
-          ` : ''}
         </div>
       </div>
     `;
@@ -459,7 +387,7 @@ function toggleTheme() {
 
 function clearAllData() {
   localStorage.clear();
-  alert("Cache data reset successfully!");
+  alert("Cache reset!");
   location.reload();
 }
 
