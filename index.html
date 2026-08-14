@@ -83,11 +83,10 @@
     </div>
   </header>
 
-  <!-- HOME VIEW SECTION (Main Banners & All Assets Grid) -->
+  <!-- HOME VIEW SECTION -->
   <div id="mainHomeView">
     <!-- Hero Feature Banners -->
     <section class="hero-banners">
-      <!-- Banner 1 -->
       <div class="hero-card hero-bg-1" onclick="enterBannerPage('sdh_hub')" style="cursor: pointer;">
         <div class="hero-overlay">
           <h2>SDH Media Technical Hub</h2>
@@ -95,7 +94,6 @@
         </div>
       </div>
 
-      <!-- Banner 2 -->
       <div class="hero-card hero-bg-2" onclick="enterBannerPage('ecotec')" style="cursor: pointer;">
         <div class="hero-overlay">
           <h2>ECOTEC POWER LTD</h2>
@@ -103,12 +101,55 @@
         </div>
       </div>
 
-      <!-- Banner 3 -->
       <div class="hero-card hero-bg-3" onclick="enterBannerPage('energy_env')" style="cursor: pointer;">
         <div class="hero-overlay">
           <h2>Energy Efficiency & Environment</h2>
           <p>Integrated service model offering consistent eco-friendly support (Click to Enter)</p>
         </div>
+      </div>
+    </section>
+
+    <!-- NEW TECHNICAL SYSTEMS NOTE SECTION -->
+    <section style="max-width: 1200px; margin: 30px auto; padding: 0 15px;">
+      <h3 style="margin-bottom: 20px; font-size: 22px; color: #00d2ff; text-align: center; border-bottom: 2px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+        <i class="fa-solid fa-gears"></i> Technical Systems Documentation & Notes
+      </h3>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+        
+        <!-- Mechanical Systems Card -->
+        <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 20px;">
+          <h4 style="color: #ff9900; margin-bottom: 12px; font-size: 18px; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-wrench"></i> Mechanical Systems
+          </h4>
+          <textarea id="mechanicalNotes" rows="5" placeholder="Write mechanical notes, specifications, or logs here..." style="width: 100%; background: rgba(0,0,0,0.4); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 10px; font-size: 13px; resize: vertical; outline: none;"></textarea>
+          <button onclick="saveNotes('mechanicalNotes')" style="margin-top: 10px; background: #0088ff; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px;">
+            <i class="fa-solid fa-floppy-disk"></i> Save Notes
+          </button>
+        </div>
+
+        <!-- Electrical & Electronics Systems Card -->
+        <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 20px;">
+          <h4 style="color: #00e676; margin-bottom: 12px; font-size: 18px; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-bolt"></i> Electrical & Electronics Systems
+          </h4>
+          <textarea id="electricalNotes" rows="5" placeholder="Write electrical & electronic specifications or logs here..." style="width: 100%; background: rgba(0,0,0,0.4); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 10px; font-size: 13px; resize: vertical; outline: none;"></textarea>
+          <button onclick="saveNotes('electricalNotes')" style="margin-top: 10px; background: #0088ff; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px;">
+            <i class="fa-solid fa-floppy-disk"></i> Save Notes
+          </button>
+        </div>
+
+        <!-- Power Systems Card -->
+        <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 20px;">
+          <h4 style="color: #ff3366; margin-bottom: 12px; font-size: 18px; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-plug"></i> Power Systems
+          </h4>
+          <textarea id="powerNotes" rows="5" placeholder="Write power generation & distribution notes here..." style="width: 100%; background: rgba(0,0,0,0.4); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 10px; font-size: 13px; resize: vertical; outline: none;"></textarea>
+          <button onclick="saveNotes('powerNotes')" style="margin-top: 10px; background: #0088ff; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px;">
+            <i class="fa-solid fa-floppy-disk"></i> Save Notes
+          </button>
+        </div>
+
       </div>
     </section>
 
@@ -124,7 +165,6 @@
       <i class="fa-solid fa-arrow-left"></i> Back to Main Home Page
     </button>
 
-    <!-- Active Banner Header Card -->
     <div id="activeBannerHeader" class="hero-card" style="height: 220px; margin-bottom: 25px; pointer-events: none;">
       <div class="hero-overlay">
         <h2 id="bannerPageTitle">Category Title</h2>
@@ -134,7 +174,6 @@
 
     <h3 style="margin-bottom: 15px; border-bottom: 2px solid rgba(255,255,255,0.1); padding-bottom: 10px;">Assets inside this Category:</h3>
     
-    <!-- Gallery Grid Inside Banner View -->
     <main id="bannerGalleryGrid" class="gallery-grid">
       <!-- Dynamic Filtered Assets via JS -->
     </main>
@@ -194,8 +233,8 @@
   <!-- Footer -->
   <footer class="footer">
     <p>&copy; 2026 SDH Media — MWM & Bangla Cat Gas Generator Technical Hub. All Rights Reserved.</p>
-    <p style="margin-top: 8px; font-size: 13px; opacity: 0.8; color: #00d2ff; font-weight: 600;">
-      Created & Founded By: Sazedul Islam
+    <p style="margin-top: 8px; font-size: 14px; opacity: 0.9; color: #00d2ff; font-weight: 700; letter-spacing: 0.5px;">
+      Created & Founded By: MD SAZEDUL HAQUE
     </p>
   </footer>
 
