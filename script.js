@@ -50,6 +50,7 @@ window.addEventListener('click', function(e) {
   }
 });
 
+// SECURE ADMIN TOGGLE (পাসওয়ার্ড কোনো পপ-আপ মেসেজে দেখানো হবে না)
 function toggleAdminAccess() {
   const lockText = document.getElementById('lockText');
   const lockIcon = document.getElementById('lockIcon');
@@ -57,7 +58,8 @@ function toggleAdminAccess() {
   const adminControls = document.querySelectorAll('.admin-note-controls');
 
   if (!isAdminUnlocked) {
-    const password = prompt("Enter Admin Password (Default: 20292030):");
+    // শুধু সিকিউর মেসেজ শো করবে, কোনো পাসওয়ার্ড দেখা যাবে না
+    const password = prompt("Enter Admin Secret Key:");
     if (password === "20292030") {
       isAdminUnlocked = true;
       if (lockText) lockText.innerText = "Admin Unlocked";
@@ -68,11 +70,11 @@ function toggleAdminAccess() {
         inputs.forEach(input => input.removeAttribute('disabled'));
       }
       adminControls.forEach(ctrl => ctrl.style.display = 'block');
-      alert("Welcome Admin! You can now write/delete notes & control assets.");
+      alert("Welcome Admin! Access granted.");
       renderAllSystemNotes();
       refreshCurrentGalleryView();
     } else if (password !== null) {
-      alert("Incorrect Password! Default password is: 1234");
+      alert("Access Denied! Incorrect Admin Secret Key.");
     }
   } else {
     isAdminUnlocked = false;
@@ -231,7 +233,7 @@ function renderMainHomeGallery() {
   });
 }
 
-// System Notes Manager (Public view, Admin Add/Delete)
+// System Notes Manager
 function addSystemNote(type) {
   if (!isAdminUnlocked) {
     alert("Admin access required to add notes!");
