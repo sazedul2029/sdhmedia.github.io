@@ -57,8 +57,8 @@ function toggleAdminAccess() {
   const adminControls = document.querySelectorAll('.admin-note-controls');
 
   if (!isAdminUnlocked) {
-    const password = prompt("Enter Admin Password (Default: 1234):");
-    if (password === "1234") {
+    const password = prompt("Enter Admin Password (Default: 20292030):");
+    if (password === "20292030") {
       isAdminUnlocked = true;
       if (lockText) lockText.innerText = "Admin Unlocked";
       if (lockIcon) lockIcon.className = "fa-solid fa-unlock";
