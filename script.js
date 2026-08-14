@@ -60,7 +60,7 @@ function toggleAdminAccess() {
   if (!isAdminUnlocked) {
     // শুধু সিকিউর মেসেজ শো করবে, কোনো পাসওয়ার্ড দেখা যাবে না
     const password = prompt("Enter Admin Secret Key:");
-    if (password === "20292030") {
+    if (password === "Sa528905Zu@") {
       isAdminUnlocked = true;
       if (lockText) lockText.innerText = "Admin Unlocked";
       if (lockIcon) lockIcon.className = "fa-solid fa-unlock";
