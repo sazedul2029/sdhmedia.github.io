@@ -4,24 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <!-- Google Search Console Verification Tag -->
   <meta name="google-site-verification" content="TpPDK489of8tj-pD6-dBr0CL6tDS90GNDkOYrOXPfwU" />
 
-  <!-- SEO Title & Description for Google Search -->
   <title>SDH Media Pro | MWM & Bangla Cat Gas Generator Technical Hub</title>
   <meta name="title" content="SDH Media Pro | MWM & Bangla Cat Gas Generator Technical Hub">
   <meta name="description" content="Official SDH Media Pro Portal: High-speed MWM & Bangla Cat Gas Generator Technical Hub, premium HD photo/video gallery, and instant downloads.">
 
-  <!-- Favicon / Logo Setup -->
   <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="favicon.png">
   <link rel="shortcut icon" type="image/png" href="favicon.png">
 
-  <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-  <!-- Style CSS Link -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -59,7 +53,7 @@
           <i class="fa-solid fa-ellipsis-vertical"></i>
         </button>
 
-        <!-- Dropdown Content for Stats & Filters -->
+        <!-- Dropdown Content -->
         <div id="statsDropdown" class="stats-dropdown">
           <div class="dropdown-header">Overview & Filters</div>
           
@@ -73,8 +67,9 @@
 
           <div class="dropdown-filters">
             <button class="filter-btn active" onclick="filterCategory('all', this)">All Assets</button>
-            <button class="filter-btn" onclick="filterCategory('photo', this)">Photos</button>
-            <button class="filter-btn" onclick="filterCategory('video', this)">Videos</button>
+            <button class="filter-btn" onclick="filterCategory('sdh_hub', this)">SDH Media Hub</button>
+            <button class="filter-btn" onclick="filterCategory('ecotec', this)">ECOTEC Power Ltd</button>
+            <button class="filter-btn" onclick="filterCategory('energy_env', this)">Energy & Environment</button>
           </div>
         </div>
       </div>
@@ -88,32 +83,38 @@
     </div>
   </header>
 
-  <!-- Hero Feature Sections (Liyu Power Style) -->
+  <!-- Hero Feature Banners (Clickable Categories) -->
   <section class="hero-banners">
     <!-- Banner 1 -->
-    <div class="hero-card hero-bg-1">
+    <div class="hero-card hero-bg-1" onclick="filterCategory('sdh_hub')" style="cursor: pointer;">
       <div class="hero-overlay">
         <h2>SDH Media Technical Hub</h2>
-        <p>Leading the Way in Green Zero-Carbon Gas & Power Solutions</p>
+        <p>Leading the Way in Green Zero-Carbon Gas & Power Solutions (Click to View Category)</p>
       </div>
     </div>
 
     <!-- Banner 2 -->
-    <div class="hero-card hero-bg-2">
+    <div class="hero-card hero-bg-2" onclick="filterCategory('ecotec')" style="cursor: pointer;">
       <div class="hero-overlay">
         <h2>ECOTEC POWER LTD</h2>
-        <p>Innovative and sustainable power generation and technical support</p>
+        <p>Innovative and sustainable power generation and technical support (Click to View Category)</p>
       </div>
     </div>
 
     <!-- Banner 3 -->
-    <div class="hero-card hero-bg-3">
+    <div class="hero-card hero-bg-3" onclick="filterCategory('energy_env')" style="cursor: pointer;">
       <div class="hero-overlay">
         <h2>Energy Efficiency & Environment</h2>
-        <p>Integrated service model offering consistent eco-friendly support</p>
+        <p>Integrated service model offering consistent eco-friendly support (Click to View Category)</p>
       </div>
     </div>
   </section>
+
+  <!-- Gallery Header Title -->
+  <div class="section-title-bar">
+    <h3 id="currentCategoryTitle">All Technical Assets</h3>
+    <button class="reset-filter-btn" onclick="filterCategory('all')">Show All</button>
+  </div>
 
   <!-- Main Media Gallery Grid -->
   <main id="galleryGrid" class="gallery-grid">
@@ -133,13 +134,17 @@
       </div>
 
       <div class="settings-section">
-        <h4>Upload Technical Asset</h4>
+        <h4>Upload Asset to Category</h4>
         <form id="uploadForm" class="upload-form locked" onsubmit="handleUpload(event)">
-          <input type="text" id="mediaTitle" placeholder="Asset Title / Technical Document Name" required disabled>
+          <input type="text" id="mediaTitle" placeholder="Asset Title / Technical Name" required disabled>
+          
+          <label style="font-size: 12px; color: var(--text-sub); display: block; margin-top: 5px;">Select Category Album:</label>
           <select id="mediaCategory" disabled>
-            <option value="photo">Photo</option>
-            <option value="video">Video</option>
+            <option value="sdh_hub">SDH Media Technical Hub</option>
+            <option value="ecotec">ECOTEC POWER LTD</option>
+            <option value="energy_env">Energy Efficiency & Environment</option>
           </select>
+
           <input type="file" id="mediaFile" accept="image/*,video/*" required disabled>
           <button type="submit" id="submitUploadBtn" class="btn-upload" disabled>Publish Asset</button>
         </form>
