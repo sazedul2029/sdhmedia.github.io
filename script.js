@@ -82,7 +82,7 @@ function toggleAdminAccess() {
   }
 }
 
-// Upload Media Asset with Specific Tag
+// Upload Media Asset
 async function handleUpload(event) {
   event.preventDefault();
   if (!isAdminUnlocked) {
@@ -122,7 +122,7 @@ async function handleUpload(event) {
     if (data.secure_url) {
       document.getElementById('uploadForm').reset();
       closeSettingsModalDirect();
-      alert("🎉 সফলভাবে উক্ত অ্যালবামে আপলোড হয়েছে!");
+      alert("🎉 সফলভাবে এই ব্যানারে আপলোড হয়েছে!");
       setTimeout(() => fetchGlobalAssets(), 1000);
     } else {
       alert("আপলোড ব্যর্থ হয়েছে!");
@@ -139,7 +139,7 @@ async function handleUpload(event) {
 // Fetch Assets from Cloudinary
 async function fetchGlobalAssets() {
   const grid = document.getElementById('galleryGrid');
-  if (grid) grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub); padding: 40px;">লোড হচ্ছে...</p>`;
+  if (grid) grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub, #888); padding: 40px;">লোড হচ্ছে...</p>`;
 
   const categories = ['sdh_hub', 'ecotec', 'energy_env'];
   let assets = [];
@@ -163,38 +163,26 @@ async function fetchGlobalAssets() {
   }
 
   window.currentAssets = assets;
-  renderGallery('all');
+  renderMainHomeGallery();
   updateStats();
 }
 
-// Render Gallery Cards
-function renderGallery(filter = 'all') {
+// Render Main Home Gallery
+function renderMainHomeGallery() {
   const grid = document.getElementById('galleryGrid');
-  const titleElem = document.getElementById('currentCategoryTitle');
   if (!grid) return;
   grid.innerHTML = '';
 
-  const categoryNames = {
-    'all': 'All Technical Assets',
-    'sdh_hub': 'SDH Media Technical Hub',
-    'ecotec': 'ECOTEC POWER LTD',
-    'energy_env': 'Energy Efficiency & Environment'
-  };
-
-  if (titleElem) titleElem.innerText = categoryNames[filter] || 'Technical Assets';
-
   const assets = window.currentAssets || [];
-  const filteredData = assets.filter(item => filter === 'all' || item.category === filter);
 
-  if (filteredData.length === 0) {
-    grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub); padding: 40px;">এই অ্যালবামে এখনো কোনো ফাইল নেই। কন্ট্রোল প্যানেল থেকে আপলোড করুন!</p>`;
+  if (assets.length === 0) {
+    grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub, #888); padding: 40px;">কোনো ফাইল পাওয়া যায়নি। সেটিংসে গিয়ে আপলোড করুন!</p>`;
     return;
   }
 
-  filteredData.forEach(item => {
+  assets.forEach(item => {
     const card = document.createElement('div');
     card.className = 'media-card';
-
     card.innerHTML = `
       <img src="${item.url}" alt="${item.title}" loading="lazy">
       <div class="card-details">
@@ -208,18 +196,80 @@ function renderGallery(filter = 'all') {
   });
 }
 
-function filterCategory(cat, btn) {
-  if (btn) {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-  }
-  renderGallery(cat);
+// Enter Inside Banner Page Mode
+function enterBannerPage(categoryKey) {
+  const mainHomeView = document.getElementById('mainHomeView');
+  const bannerPageView = document.getElementById('bannerPageView');
+  const bannerHeader = document.getElementById('activeBannerHeader');
+  const bannerTitle = document.getElementById('bannerPageTitle');
+  const bannerDesc = document.getElementById('bannerPageDesc');
+  const grid = document.getElementById('bannerGalleryGrid');
 
-  // Auto Scroll to Gallery Grid
-  const grid = document.getElementById('galleryGrid');
-  if (grid && cat !== 'all') {
-    grid.scrollIntoView({ behavior: 'smooth' });
+  const metaData = {
+    'sdh_hub': {
+      title: 'SDH Media Technical Hub',
+      desc: 'Leading the Way in Green Zero-Carbon Gas & Power Solutions',
+      bgClass: 'hero-bg-1'
+    },
+    'ecotec': {
+      title: 'ECOTEC POWER LTD',
+      desc: 'Innovative and sustainable power generation and technical support',
+      bgClass: 'hero-bg-2'
+    },
+    'energy_env': {
+      title: 'Energy Efficiency & Environment',
+      desc: 'Integrated service model offering consistent eco-friendly support',
+      bgClass: 'hero-bg-3'
+    }
+  };
+
+  const currentMeta = metaData[categoryKey];
+  if (!currentMeta) return;
+
+  // Set Banner Info
+  bannerTitle.innerText = currentMeta.title;
+  bannerDesc.innerText = currentMeta.desc;
+  bannerHeader.className = `hero-card ${currentMeta.bgClass}`;
+
+  // Filter Assets
+  const assets = window.currentAssets || [];
+  const filtered = assets.filter(item => item.category === categoryKey);
+
+  grid.innerHTML = '';
+  if (filtered.length === 0) {
+    grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub, #888); padding: 40px;">এই ব্যানারের ভেতরে এখনো কোনো ছবি আপলোড করা হয়নি!</p>`;
+  } else {
+    filtered.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'media-card';
+      card.innerHTML = `
+        <img src="${item.url}" alt="${item.title}" loading="lazy">
+        <div class="card-details">
+          <div class="card-title">${item.title}</div>
+          <a href="${item.url}" target="_blank" download class="download-link">
+            <i class="fa-solid fa-download"></i> Download High Res
+          </a>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
   }
+
+  // Switch Views
+  mainHomeView.style.display = 'none';
+  bannerPageView.style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Close Stats Menu if open
+  const dropdown = document.getElementById('statsDropdown');
+  if (dropdown) dropdown.classList.remove('show');
+}
+
+// Return to Main Home
+function openMainHomeView() {
+  document.getElementById('bannerPageView').style.display = 'none';
+  document.getElementById('mainHomeView').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function filterMedia() {
@@ -227,9 +277,10 @@ function filterMedia() {
   const assets = window.currentAssets || [];
   const filtered = assets.filter(item => item.title.toLowerCase().includes(query));
   
-  const grid = document.getElementById('galleryGrid');
+  const isBannerView = document.getElementById('bannerPageView').style.display === 'block';
+  const grid = isBannerView ? document.getElementById('bannerGalleryGrid') : document.getElementById('galleryGrid');
+  
   grid.innerHTML = '';
-
   filtered.forEach(item => {
     const card = document.createElement('div');
     card.className = 'media-card';
