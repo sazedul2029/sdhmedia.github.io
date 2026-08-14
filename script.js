@@ -1,5 +1,6 @@
 // Cloudinary Configuration
 const CLOUD_NAME = "crkxguin";
+const UPLOAD_PRESET = "ml_default"; // স্টেপ ১ এর প্রিসেট নেম
 
 let isAdminUnlocked = false;
 
@@ -58,7 +59,7 @@ function toggleAdminAccess() {
 
   if (!isAdminUnlocked) {
     const password = prompt("Enter Admin Secret Key:");
-    if (password === "Sa528905Zu@") {
+    if (password === "20292030") {
       isAdminUnlocked = true;
       if (lockText) lockText.innerText = "Admin Unlocked";
       if (lockIcon) lockIcon.className = "fa-solid fa-unlock";
@@ -90,6 +91,78 @@ function toggleAdminAccess() {
   }
 }
 
+// Upload Asset Function
+async function handleUpload(event) {
+  event.preventDefault();
+  if (!isAdminUnlocked) {
+    alert("Please unlock Admin Panel first!");
+    return;
+  }
+
+  const categoryInput = document.getElementById('mediaCategory').value;
+  const fileInput = document.getElementById('mediaFile');
+  const submitBtn = document.getElementById('submitUploadBtn');
+
+  if (!fileInput.files[0]) {
+    alert("Please select a file to upload!");
+    return;
+  }
+
+  const file = fileInput.files[0];
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', UPLOAD_PRESET);
+  formData.append('tags', categoryInput);
+
+  submitBtn.disabled = true;
+  submitBtn.innerText = "Uploading Asset...";
+
+  try {
+    const isVideo = file.type.startsWith('video');
+    const resourceType = isVideo ? 'video' : 'image';
+    
+    const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${resourceType}/upload`, {
+      method: 'POST',
+      body: formData
+    });
+
+    const data = await response.json();
+
+    if (data.secure_url) {
+      document.getElementById('uploadForm').reset();
+      closeSettingsModalDirect();
+      alert("🎉 Asset published successfully!");
+      setTimeout(() => fetchGlobalAssets(), 1500);
+    } else {
+      alert("Upload failed! Please ensure 'ml_default' Unsigned Upload Preset is set in Cloudinary.");
+    }
+  } catch (error) {
+    console.error("Upload error:", error);
+    alert("Error uploading asset! Check internet or configuration.");
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.innerText = "Publish Asset";
+  }
+}
+
+// Delete Asset Function (Hide from UI)
+function deleteAsset(id) {
+  if (!isAdminUnlocked) {
+    alert("Admin access required to delete assets!");
+    return;
+  }
+
+  if (confirm("Are you sure you want to remove this asset from website view?")) {
+    window.currentAssets = window.currentAssets.filter(item => item.id !== id);
+    const deletedList = JSON.parse(localStorage.getItem('deletedAssets') || '[]');
+    deletedList.push(id);
+    localStorage.setItem('deletedAssets', JSON.stringify(deletedList));
+    alert("Asset removed!");
+    refreshCurrentGalleryView();
+    updateStats();
+  }
+}
+
 // Fetch Assets directly from Cloudinary
 async function fetchGlobalAssets() {
   const grid = document.getElementById('galleryGrid');
@@ -97,18 +170,21 @@ async function fetchGlobalAssets() {
 
   const categories = ['sdh_hub', 'ecotec', 'energy_env'];
   let assets = [];
+  const deletedAssets = JSON.parse(localStorage.getItem('deletedAssets') || '[]');
 
   for (const cat of categories) {
     try {
       const res = await fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/${cat}.json?timestamp=${new Date().getTime()}`).catch(() => null);
       if (res && res.ok) {
         const data = await res.json();
-        const items = data.resources.map(r => ({
-          id: r.public_id,
-          title: r.public_id.split('/')[0],
-          category: cat,
-          url: `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/f_auto,q_auto/v${r.version}/${r.public_id}.${r.format}`
-        }));
+        const items = data.resources
+          .filter(r => !deletedAssets.includes(r.public_id))
+          .map(r => ({
+            id: r.public_id,
+            title: r.public_id.split('/')[0],
+            category: cat,
+            url: `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/f_auto,q_auto/v${r.version}/${r.public_id}.${r.format}`
+          }));
         assets = assets.concat(items);
       }
     } catch (e) {
@@ -145,6 +221,11 @@ function renderMainHomeGallery() {
           <a href="${item.url}" target="_blank" download class="download-link" style="flex:1;">
             <i class="fa-solid fa-download"></i> Download
           </a>
+          ${isAdminUnlocked ? `
+            <button onclick="deleteAsset('${item.id}')" style="background:#ff3366; color:#fff; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:bold;">
+              <i class="fa-solid fa-trash"></i> Delete
+            </button>
+          ` : ''}
         </div>
       </div>
     `;
@@ -301,6 +382,11 @@ function renderBannerGalleryGrid(categoryKey) {
             <a href="${item.url}" target="_blank" download class="download-link" style="flex:1;">
               <i class="fa-solid fa-download"></i> Download
             </a>
+            ${isAdminUnlocked ? `
+              <button onclick="deleteAsset('${item.id}')" style="background:#ff3366; color:#fff; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:bold;">
+                <i class="fa-solid fa-trash"></i> Delete
+              </button>
+            ` : ''}
           </div>
         </div>
       `;
@@ -344,6 +430,11 @@ function filterMedia() {
         <div class="card-title">${item.title}</div>
         <div style="display: flex; gap: 8px; margin-top: 8px;">
           <a href="${item.url}" target="_blank" class="download-link" style="flex:1;"><i class="fa-solid fa-download"></i> Download</a>
+          ${isAdminUnlocked ? `
+            <button onclick="deleteAsset('${item.id}')" style="background:#ff3366; color:#fff; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:bold;">
+              <i class="fa-solid fa-trash"></i> Delete
+            </button>
+          ` : ''}
         </div>
       </div>
     `;
