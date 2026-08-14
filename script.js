@@ -2,15 +2,12 @@
 const CLOUD_NAME = "crkxguin";
 const UPLOAD_PRESET = "ml_default";
 
-// Local Admin State
 let isAdminUnlocked = false;
 
-// Page Load Event
 document.addEventListener('DOMContentLoaded', () => {
   fetchGlobalAssets();
 });
 
-// Modal Handlers
 function toggleSettingsModal() {
   const modal = document.getElementById('settingsModal');
   if (modal) modal.classList.toggle('show');
@@ -39,13 +36,11 @@ function closeAuthModal(event) {
   if (event.target.id === 'authModal') closeAuthModalDirect();
 }
 
-// Three-Dot Menu Dropdown Toggle
 function toggleStatsMenu() {
   const dropdown = document.getElementById('statsDropdown');
   if (dropdown) dropdown.classList.toggle('show');
 }
 
-// Close Dropdown when clicking outside
 window.addEventListener('click', function(e) {
   const dropdown = document.getElementById('statsDropdown');
   const menuBtn = e.target.closest('.menu-dropdown-container');
@@ -54,7 +49,6 @@ window.addEventListener('click', function(e) {
   }
 });
 
-// Admin Panel Unlock
 function toggleAdminAccess() {
   const lockText = document.getElementById('lockText');
   const lockIcon = document.getElementById('lockIcon');
@@ -88,7 +82,7 @@ function toggleAdminAccess() {
   }
 }
 
-// Upload Media Asset
+// Upload Media Asset with Specific Tag
 async function handleUpload(event) {
   event.preventDefault();
   if (!isAdminUnlocked) {
@@ -96,8 +90,7 @@ async function handleUpload(event) {
     return;
   }
 
-  const titleInput = document.getElementById('mediaTitle');
-  const categoryInput = document.getElementById('mediaCategory');
+  const categoryInput = document.getElementById('mediaCategory').value;
   const fileInput = document.getElementById('mediaFile');
   const submitBtn = document.getElementById('submitUploadBtn');
 
@@ -110,13 +103,15 @@ async function handleUpload(event) {
   const formData = new FormData();
   formData.append('file', file);
   formData.append('upload_preset', UPLOAD_PRESET);
-  formData.append('tags', categoryInput.value);
+  formData.append('tags', categoryInput);
 
   submitBtn.disabled = true;
   submitBtn.innerText = "আপলোড হচ্ছে...";
 
   try {
-    const resourceType = categoryInput.value === 'video' ? 'video' : 'image';
+    const isVideo = file.type.startsWith('video');
+    const resourceType = isVideo ? 'video' : 'image';
+    
     const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${resourceType}/upload`, {
       method: 'POST',
       body: formData
@@ -127,10 +122,10 @@ async function handleUpload(event) {
     if (data.secure_url) {
       document.getElementById('uploadForm').reset();
       closeSettingsModalDirect();
-      alert("🎉 সফলভাবে ক্লাউডে আপলোড হয়েছে!");
+      alert("🎉 সফলভাবে উক্ত অ্যালবামে আপলোড হয়েছে!");
       setTimeout(() => fetchGlobalAssets(), 1000);
     } else {
-      alert("আপলোড ব্যর্থ হয়েছে! প্রিসেট নাম চেক করুন।");
+      alert("আপলোড ব্যর্থ হয়েছে!");
     }
   } catch (error) {
     console.error("Upload error:", error);
@@ -141,59 +136,58 @@ async function handleUpload(event) {
   }
 }
 
-// Fetch Assets with Auto Optimization (f_auto, q_auto)
+// Fetch Assets from Cloudinary
 async function fetchGlobalAssets() {
   const grid = document.getElementById('galleryGrid');
   if (grid) grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub); padding: 40px;">লোড হচ্ছে...</p>`;
 
-  try {
-    const imgRes = await fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/photo.json`).catch(() => null);
-    const vidRes = await fetch(`https://res.cloudinary.com/${CLOUD_NAME}/video/list/video.json`).catch(() => null);
+  const categories = ['sdh_hub', 'ecotec', 'energy_env'];
+  let assets = [];
 
-    let assets = [];
-
-    if (imgRes && imgRes.ok) {
-      const imgData = await imgRes.json();
-      const images = imgData.resources.map(r => ({
-        id: r.public_id,
-        title: r.public_id.split('/')[0],
-        category: 'photo',
-        url: `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/f_auto,q_auto/v${r.version}/${r.public_id}.${r.format}`
-      }));
-      assets = assets.concat(images);
+  for (const cat of categories) {
+    try {
+      const res = await fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/${cat}.json`).catch(() => null);
+      if (res && res.ok) {
+        const data = await res.json();
+        const items = data.resources.map(r => ({
+          id: r.public_id,
+          title: r.public_id.split('/')[0],
+          category: cat,
+          url: `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/f_auto,q_auto/v${r.version}/${r.public_id}.${r.format}`
+        }));
+        assets = assets.concat(items);
+      }
+    } catch (e) {
+      console.log("No images in " + cat);
     }
-
-    if (vidRes && vidRes.ok) {
-      const vidData = await vidRes.json();
-      const videos = vidData.resources.map(r => ({
-        id: r.public_id,
-        title: r.public_id.split('/')[0],
-        category: 'video',
-        url: `https://res.cloudinary.com/${CLOUD_NAME}/video/upload/f_auto,q_auto/v${r.version}/${r.public_id}.${r.format}`
-      }));
-      assets = assets.concat(videos);
-    }
-
-    window.currentAssets = assets;
-    renderGallery('all');
-    updateStats();
-  } catch (err) {
-    console.error("Error fetching assets:", err);
-    renderGallery('all');
   }
+
+  window.currentAssets = assets;
+  renderGallery('all');
+  updateStats();
 }
 
 // Render Gallery Cards
 function renderGallery(filter = 'all') {
   const grid = document.getElementById('galleryGrid');
+  const titleElem = document.getElementById('currentCategoryTitle');
   if (!grid) return;
   grid.innerHTML = '';
+
+  const categoryNames = {
+    'all': 'All Technical Assets',
+    'sdh_hub': 'SDH Media Technical Hub',
+    'ecotec': 'ECOTEC POWER LTD',
+    'energy_env': 'Energy Efficiency & Environment'
+  };
+
+  if (titleElem) titleElem.innerText = categoryNames[filter] || 'Technical Assets';
 
   const assets = window.currentAssets || [];
   const filteredData = assets.filter(item => filter === 'all' || item.category === filter);
 
   if (filteredData.length === 0) {
-    grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub); padding: 40px;">টেকনিক্যাল হাবে কোনো ফাইল নেই। গিয়ার আইকনে চাপ দিয়ে আপলোড করুন!</p>`;
+    grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub); padding: 40px;">এই অ্যালবামে এখনো কোনো ফাইল নেই। কন্ট্রোল প্যানেল থেকে আপলোড করুন!</p>`;
     return;
   }
 
@@ -201,12 +195,8 @@ function renderGallery(filter = 'all') {
     const card = document.createElement('div');
     card.className = 'media-card';
 
-    const mediaElement = item.category === 'video' 
-      ? `<video src="${item.url}" controls preload="metadata"></video>`
-      : `<img src="${item.url}" alt="${item.title}" loading="lazy">`;
-
     card.innerHTML = `
-      ${mediaElement}
+      <img src="${item.url}" alt="${item.title}" loading="lazy">
       <div class="card-details">
         <div class="card-title">${item.title}</div>
         <a href="${item.url}" target="_blank" download class="download-link">
@@ -219,9 +209,17 @@ function renderGallery(filter = 'all') {
 }
 
 function filterCategory(cat, btn) {
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
+  if (btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
   renderGallery(cat);
+
+  // Auto Scroll to Gallery Grid
+  const grid = document.getElementById('galleryGrid');
+  if (grid && cat !== 'all') {
+    grid.scrollIntoView({ behavior: 'smooth' });
+  }
 }
 
 function filterMedia() {
@@ -231,19 +229,12 @@ function filterMedia() {
   
   const grid = document.getElementById('galleryGrid');
   grid.innerHTML = '';
-  
-  if (filtered.length === 0) {
-    grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub); padding: 40px;">খুঁজে পাওয়া যায়নি!</p>`;
-    return;
-  }
 
   filtered.forEach(item => {
     const card = document.createElement('div');
     card.className = 'media-card';
-    const mediaElement = item.category === 'video' ? `<video src="${item.url}" controls></video>` : `<img src="${item.url}">`;
-
     card.innerHTML = `
-      ${mediaElement}
+      <img src="${item.url}">
       <div class="card-details">
         <div class="card-title">${item.title}</div>
         <a href="${item.url}" target="_blank" class="download-link"><i class="fa-solid fa-download"></i> Download</a>
@@ -255,12 +246,9 @@ function filterMedia() {
 
 function updateStats() {
   const assets = window.currentAssets || [];
-  const photos = assets.filter(i => i.category === 'photo').length;
-  const videos = assets.filter(i => i.category === 'video').length;
-
-  if (document.getElementById('statPhotos')) document.getElementById('statPhotos').innerText = photos;
-  if (document.getElementById('statVideos')) document.getElementById('statVideos').innerText = videos;
-  if (document.getElementById('statDownloads')) document.getElementById('statDownloads').innerText = photos + videos;
+  if (document.getElementById('statPhotos')) document.getElementById('statPhotos').innerText = assets.length;
+  if (document.getElementById('statVideos')) document.getElementById('statVideos').innerText = 0;
+  if (document.getElementById('statDownloads')) document.getElementById('statDownloads').innerText = assets.length;
 }
 
 function toggleTheme() {
