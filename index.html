@@ -29,7 +29,7 @@
 
   <!-- Navbar -->
   <header class="navbar">
-    <div class="logo">
+    <div class="logo" onclick="openMainHomeView()" style="cursor: pointer;">
       <img src="sazedul2029.png" alt="SDH Media Logo" id="navLogo">
       <div class="logo-text">
         <span class="brand-name">SDH Media</span>
@@ -66,10 +66,10 @@
           <hr class="dropdown-divider">
 
           <div class="dropdown-filters">
-            <button class="filter-btn active" onclick="filterCategory('all', this)">All Assets</button>
-            <button class="filter-btn" onclick="filterCategory('sdh_hub', this)">SDH Media Hub</button>
-            <button class="filter-btn" onclick="filterCategory('ecotec', this)">ECOTEC Power Ltd</button>
-            <button class="filter-btn" onclick="filterCategory('energy_env', this)">Energy & Environment</button>
+            <button class="filter-btn active" onclick="openMainHomeView()">All Home Assets</button>
+            <button class="filter-btn" onclick="enterBannerPage('sdh_hub')">SDH Media Hub</button>
+            <button class="filter-btn" onclick="enterBannerPage('ecotec')">ECOTEC Power Ltd</button>
+            <button class="filter-btn" onclick="enterBannerPage('energy_env')">Energy & Environment</button>
           </div>
         </div>
       </div>
@@ -83,43 +83,62 @@
     </div>
   </header>
 
-  <!-- Hero Feature Banners (Clickable Categories) -->
-  <section class="hero-banners">
-    <!-- Banner 1 -->
-    <div class="hero-card hero-bg-1" onclick="filterCategory('sdh_hub')" style="cursor: pointer;">
-      <div class="hero-overlay">
-        <h2>SDH Media Technical Hub</h2>
-        <p>Leading the Way in Green Zero-Carbon Gas & Power Solutions (Click to View Category)</p>
+  <!-- HOME VIEW SECTION (Main Banners & All Assets Grid) -->
+  <div id="mainHomeView">
+    <!-- Hero Feature Banners -->
+    <section class="hero-banners">
+      <!-- Banner 1 -->
+      <div class="hero-card hero-bg-1" onclick="enterBannerPage('sdh_hub')" style="cursor: pointer;">
+        <div class="hero-overlay">
+          <h2>SDH Media Technical Hub</h2>
+          <p>Leading the Way in Green Zero-Carbon Gas & Power Solutions (Click to Enter)</p>
+        </div>
       </div>
-    </div>
 
-    <!-- Banner 2 -->
-    <div class="hero-card hero-bg-2" onclick="filterCategory('ecotec')" style="cursor: pointer;">
-      <div class="hero-overlay">
-        <h2>ECOTEC POWER LTD</h2>
-        <p>Innovative and sustainable power generation and technical support (Click to View Category)</p>
+      <!-- Banner 2 -->
+      <div class="hero-card hero-bg-2" onclick="enterBannerPage('ecotec')" style="cursor: pointer;">
+        <div class="hero-overlay">
+          <h2>ECOTEC POWER LTD</h2>
+          <p>Innovative and sustainable power generation and technical support (Click to Enter)</p>
+        </div>
       </div>
-    </div>
 
-    <!-- Banner 3 -->
-    <div class="hero-card hero-bg-3" onclick="filterCategory('energy_env')" style="cursor: pointer;">
-      <div class="hero-overlay">
-        <h2>Energy Efficiency & Environment</h2>
-        <p>Integrated service model offering consistent eco-friendly support (Click to View Category)</p>
+      <!-- Banner 3 -->
+      <div class="hero-card hero-bg-3" onclick="enterBannerPage('energy_env')" style="cursor: pointer;">
+        <div class="hero-overlay">
+          <h2>Energy Efficiency & Environment</h2>
+          <p>Integrated service model offering consistent eco-friendly support (Click to Enter)</p>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Gallery Header Title -->
-  <div class="section-title-bar">
-    <h3 id="currentCategoryTitle">All Technical Assets</h3>
-    <button class="reset-filter-btn" onclick="filterCategory('all')">Show All</button>
+    <!-- Main Media Gallery Grid (All Assets) -->
+    <main id="galleryGrid" class="gallery-grid">
+      <!-- Dynamic Assets via JS -->
+    </main>
   </div>
 
-  <!-- Main Media Gallery Grid -->
-  <main id="galleryGrid" class="gallery-grid">
-    <!-- Dynamic Assets via JS -->
-  </main>
+  <!-- SINGLE BANNER PAGE VIEW (Opens when banner is clicked) -->
+  <div id="bannerPageView" style="display: none; padding: 20px; max-width: 1200px; margin: 0 auto;">
+    <button onclick="openMainHomeView()" style="padding: 10px 18px; font-size: 14px; border-radius: 8px; border: none; background: #0088ff; color: #fff; cursor: pointer; margin-bottom: 20px; font-weight: bold; display: flex; align-items: center; gap: 8px;">
+      <i class="fa-solid fa-arrow-left"></i> Back to Main Home Page
+    </button>
+
+    <!-- Active Banner Header Card -->
+    <div id="activeBannerHeader" class="hero-card" style="height: 220px; margin-bottom: 25px; pointer-events: none;">
+      <div class="hero-overlay">
+        <h2 id="bannerPageTitle">Category Title</h2>
+        <p id="bannerPageDesc">Category Description</p>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom: 15px; border-bottom: 2px solid rgba(255,255,255,0.1); padding-bottom: 10px;">Assets inside this Banner:</h3>
+    
+    <!-- Gallery Grid Inside Banner View -->
+    <main id="bannerGalleryGrid" class="gallery-grid">
+      <!-- Dynamic Filtered Assets via JS -->
+    </main>
+  </div>
 
   <!-- Settings / Upload Modal -->
   <div id="settingsModal" class="modal" onclick="closeSettingsModal(event)">
@@ -134,19 +153,18 @@
       </div>
 
       <div class="settings-section">
-        <h4>Upload Asset to Category</h4>
+        <h4>Upload Asset to Category Banner</h4>
         <form id="uploadForm" class="upload-form locked" onsubmit="handleUpload(event)">
           <input type="text" id="mediaTitle" placeholder="Asset Title / Technical Name" required disabled>
           
-          <label style="font-size: 12px; color: var(--text-sub); display: block; margin-top: 5px;">Select Category Album:</label>
-          <select id="mediaCategory" disabled>
+          <select id="mediaCategory" disabled style="margin-top: 8px; padding: 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: #fff; width: 100%;">
             <option value="sdh_hub">SDH Media Technical Hub</option>
             <option value="ecotec">ECOTEC POWER LTD</option>
             <option value="energy_env">Energy Efficiency & Environment</option>
           </select>
 
-          <input type="file" id="mediaFile" accept="image/*,video/*" required disabled>
-          <button type="submit" id="submitUploadBtn" class="btn-upload" disabled>Publish Asset</button>
+          <input type="file" id="mediaFile" accept="image/*,video/*" required disabled style="margin-top: 8px;">
+          <button type="submit" id="submitUploadBtn" class="btn-upload" disabled style="margin-top: 10px;">Publish Asset</button>
         </form>
       </div>
 
