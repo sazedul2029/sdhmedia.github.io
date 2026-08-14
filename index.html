@@ -109,7 +109,7 @@
       </div>
     </section>
 
-    <!-- NEW TECHNICAL SYSTEMS NOTE SECTION -->
+    <!-- TECHNICAL SYSTEMS DOCUMENTATION & NOTES (Visible to all, editable only by Admin) -->
     <section style="max-width: 1200px; margin: 30px auto; padding: 0 15px;">
       <h3 style="margin-bottom: 20px; font-size: 22px; color: #00d2ff; text-align: center; border-bottom: 2px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
         <i class="fa-solid fa-gears"></i> Technical Systems Documentation & Notes
@@ -122,10 +122,23 @@
           <h4 style="color: #ff9900; margin-bottom: 12px; font-size: 18px; display: flex; align-items: center; gap: 8px;">
             <i class="fa-solid fa-wrench"></i> Mechanical Systems
           </h4>
-          <textarea id="mechanicalNotes" rows="5" placeholder="Write mechanical notes, specifications, or logs here..." style="width: 100%; background: rgba(0,0,0,0.4); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 10px; font-size: 13px; resize: vertical; outline: none;"></textarea>
-          <button onclick="saveNotes('mechanicalNotes')" style="margin-top: 10px; background: #0088ff; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px;">
-            <i class="fa-solid fa-floppy-disk"></i> Save Notes
-          </button>
+          
+          <div id="mechanicalDisplayList" style="min-height: 100px; max-height: 250px; overflow-y: auto; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; font-size: 13px; line-height: 1.6; color: #e0e0e0; margin-bottom: 10px;">
+            <!-- Public Notes List -->
+          </div>
+
+          <!-- Admin Controls (Hidden by default) -->
+          <div class="admin-note-controls" style="display: none;">
+            <textarea id="mechanicalInput" rows="3" placeholder="Add a new mechanical note..." style="width: 100%; background: rgba(0,0,0,0.5); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; padding: 8px; font-size: 12px; resize: vertical; outline: none;"></textarea>
+            <div style="display: flex; gap: 8px; margin-top: 8px;">
+              <button onclick="addSystemNote('mechanical')" style="background: #0088ff; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px; flex: 1;">
+                <i class="fa-solid fa-plus"></i> Add Note
+              </button>
+              <button onclick="clearSystemNotes('mechanical')" style="background: #ff3366; color: #fff; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px;">
+                <i class="fa-solid fa-trash"></i> Clear All
+              </button>
+            </div>
+          </div>
         </div>
 
         <!-- Electrical & Electronics Systems Card -->
@@ -133,10 +146,23 @@
           <h4 style="color: #00e676; margin-bottom: 12px; font-size: 18px; display: flex; align-items: center; gap: 8px;">
             <i class="fa-solid fa-bolt"></i> Electrical & Electronics Systems
           </h4>
-          <textarea id="electricalNotes" rows="5" placeholder="Write electrical & electronic specifications or logs here..." style="width: 100%; background: rgba(0,0,0,0.4); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 10px; font-size: 13px; resize: vertical; outline: none;"></textarea>
-          <button onclick="saveNotes('electricalNotes')" style="margin-top: 10px; background: #0088ff; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px;">
-            <i class="fa-solid fa-floppy-disk"></i> Save Notes
-          </button>
+          
+          <div id="electricalDisplayList" style="min-height: 100px; max-height: 250px; overflow-y: auto; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; font-size: 13px; line-height: 1.6; color: #e0e0e0; margin-bottom: 10px;">
+            <!-- Public Notes List -->
+          </div>
+
+          <!-- Admin Controls (Hidden by default) -->
+          <div class="admin-note-controls" style="display: none;">
+            <textarea id="electricalInput" rows="3" placeholder="Add a new electrical note..." style="width: 100%; background: rgba(0,0,0,0.5); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; padding: 8px; font-size: 12px; resize: vertical; outline: none;"></textarea>
+            <div style="display: flex; gap: 8px; margin-top: 8px;">
+              <button onclick="addSystemNote('electrical')" style="background: #0088ff; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px; flex: 1;">
+                <i class="fa-solid fa-plus"></i> Add Note
+              </button>
+              <button onclick="clearSystemNotes('electrical')" style="background: #ff3366; color: #fff; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px;">
+                <i class="fa-solid fa-trash"></i> Clear All
+              </button>
+            </div>
+          </div>
         </div>
 
         <!-- Power Systems Card -->
@@ -144,10 +170,23 @@
           <h4 style="color: #ff3366; margin-bottom: 12px; font-size: 18px; display: flex; align-items: center; gap: 8px;">
             <i class="fa-solid fa-plug"></i> Power Systems
           </h4>
-          <textarea id="powerNotes" rows="5" placeholder="Write power generation & distribution notes here..." style="width: 100%; background: rgba(0,0,0,0.4); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 10px; font-size: 13px; resize: vertical; outline: none;"></textarea>
-          <button onclick="saveNotes('powerNotes')" style="margin-top: 10px; background: #0088ff; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px;">
-            <i class="fa-solid fa-floppy-disk"></i> Save Notes
-          </button>
+          
+          <div id="powerDisplayList" style="min-height: 100px; max-height: 250px; overflow-y: auto; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; font-size: 13px; line-height: 1.6; color: #e0e0e0; margin-bottom: 10px;">
+            <!-- Public Notes List -->
+          </div>
+
+          <!-- Admin Controls (Hidden by default) -->
+          <div class="admin-note-controls" style="display: none;">
+            <textarea id="powerInput" rows="3" placeholder="Add a new power note..." style="width: 100%; background: rgba(0,0,0,0.5); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; padding: 8px; font-size: 12px; resize: vertical; outline: none;"></textarea>
+            <div style="display: flex; gap: 8px; margin-top: 8px;">
+              <button onclick="addSystemNote('power')" style="background: #0088ff; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px; flex: 1;">
+                <i class="fa-solid fa-plus"></i> Add Note
+              </button>
+              <button onclick="clearSystemNotes('power')" style="background: #ff3366; color: #fff; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px;">
+                <i class="fa-solid fa-trash"></i> Clear All
+              </button>
+            </div>
+          </div>
         </div>
 
       </div>
