@@ -6,6 +6,7 @@ let isAdminUnlocked = false;
 
 document.addEventListener('DOMContentLoaded', () => {
   fetchGlobalAssets();
+  loadSavedNotes();
 });
 
 function toggleSettingsModal() {
@@ -138,15 +139,16 @@ async function handleUpload(event) {
   }
 }
 
-// Admin Delete Functionality
+// Admin Permanent Delete Functionality
 function deleteAsset(id) {
   if (!isAdminUnlocked) {
     alert("Admin access required to delete assets!");
     return;
   }
 
-  if (confirm("Are you sure you want to delete this asset?")) {
+  if (confirm("Are you sure you want to permanently delete this asset?")) {
     window.currentAssets = window.currentAssets.filter(item => item.id !== id);
+    localStorage.setItem('deletedAssets', JSON.stringify([...JSON.parse(localStorage.getItem('deletedAssets') || '[]'), id]));
     alert("Asset removed successfully!");
     refreshCurrentGalleryView();
     updateStats();
@@ -161,17 +163,21 @@ async function fetchGlobalAssets() {
   const categories = ['sdh_hub', 'ecotec', 'energy_env'];
   let assets = [];
 
+  const deletedAssets = JSON.parse(localStorage.getItem('deletedAssets') || '[]');
+
   for (const cat of categories) {
     try {
       const res = await fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/${cat}.json`).catch(() => null);
       if (res && res.ok) {
         const data = await res.json();
-        const items = data.resources.map(r => ({
-          id: r.public_id,
-          title: r.public_id.split('/')[0],
-          category: cat,
-          url: `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/f_auto,q_auto/v${r.version}/${r.public_id}.${r.format}`
-        }));
+        const items = data.resources
+          .filter(r => !deletedAssets.includes(r.public_id))
+          .map(r => ({
+            id: r.public_id,
+            title: r.public_id.split('/')[0],
+            category: cat,
+            url: `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/f_auto,q_auto/v${r.version}/${r.public_id}.${r.format}`
+          }));
         assets = assets.concat(items);
       }
     } catch (e) {
@@ -217,6 +223,22 @@ function renderMainHomeGallery() {
       </div>
     `;
     grid.appendChild(card);
+  });
+}
+
+// System Notes Manager
+function saveNotes(elementId) {
+  const content = document.getElementById(elementId).value;
+  localStorage.setItem(elementId, content);
+  alert("Technical notes saved successfully!");
+}
+
+function loadSavedNotes() {
+  ['mechanicalNotes', 'electricalNotes', 'powerNotes'].forEach(id => {
+    const saved = localStorage.getItem(id);
+    if (saved && document.getElementById(id)) {
+      document.getElementById(id).value = saved;
+    }
   });
 }
 
