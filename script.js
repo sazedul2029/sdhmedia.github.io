@@ -55,7 +55,7 @@ function toggleAdminAccess() {
   const uploadForm = document.getElementById('uploadForm');
 
   if (!isAdminUnlocked) {
-    const password = prompt("পাসওয়ার্ড দিন (Default Password: 1234):");
+    const password = prompt("Enter Admin Password (Default: 1234):");
     if (password === "1234") {
       isAdminUnlocked = true;
       if (lockText) lockText.innerText = "Admin Unlocked";
@@ -65,9 +65,10 @@ function toggleAdminAccess() {
         const inputs = uploadForm.querySelectorAll('input, select, button');
         inputs.forEach(input => input.removeAttribute('disabled'));
       }
-      alert("স্বাগতম! টেকনিক্যাল প্যানেল আনলক হয়েছে।");
+      alert("Welcome Admin! Panel unlocked and Delete controls enabled.");
+      refreshCurrentGalleryView();
     } else if (password !== null) {
-      alert("ভুল পাসওয়ার্ড! সঠিক পাসওয়ার্ড: 1234");
+      alert("Incorrect Password! Default password is: 1234");
     }
   } else {
     isAdminUnlocked = false;
@@ -78,7 +79,8 @@ function toggleAdminAccess() {
       const inputs = uploadForm.querySelectorAll('input, select, button');
       inputs.forEach(input => input.setAttribute('disabled', 'true'));
     }
-    alert("প্যানেল লক করা হয়েছে।");
+    alert("Admin Panel locked.");
+    refreshCurrentGalleryView();
   }
 }
 
@@ -86,7 +88,7 @@ function toggleAdminAccess() {
 async function handleUpload(event) {
   event.preventDefault();
   if (!isAdminUnlocked) {
-    alert("প্রথমে প্যানেল আনলক করুন!");
+    alert("Please unlock Admin Panel first!");
     return;
   }
 
@@ -95,7 +97,7 @@ async function handleUpload(event) {
   const submitBtn = document.getElementById('submitUploadBtn');
 
   if (!fileInput.files[0]) {
-    alert("একটি ফাইল সিলেক্ট করুন!");
+    alert("Please select a file to upload!");
     return;
   }
 
@@ -106,7 +108,7 @@ async function handleUpload(event) {
   formData.append('tags', categoryInput);
 
   submitBtn.disabled = true;
-  submitBtn.innerText = "আপলোড হচ্ছে...";
+  submitBtn.innerText = "Uploading Asset...";
 
   try {
     const isVideo = file.type.startsWith('video');
@@ -122,24 +124,39 @@ async function handleUpload(event) {
     if (data.secure_url) {
       document.getElementById('uploadForm').reset();
       closeSettingsModalDirect();
-      alert("🎉 সফলভাবে এই ব্যানারে আপলোড হয়েছে!");
+      alert("🎉 Asset published successfully!");
       setTimeout(() => fetchGlobalAssets(), 1000);
     } else {
-      alert("আপলোড ব্যর্থ হয়েছে!");
+      alert("Upload failed! Please check Cloudinary setup.");
     }
   } catch (error) {
     console.error("Upload error:", error);
-    alert("আপলোডে সমস্যা হয়েছে!");
+    alert("Error uploading asset!");
   } finally {
     submitBtn.disabled = false;
     submitBtn.innerText = "Publish Asset";
   }
 }
 
+// Admin Delete Functionality
+function deleteAsset(id) {
+  if (!isAdminUnlocked) {
+    alert("Admin access required to delete assets!");
+    return;
+  }
+
+  if (confirm("Are you sure you want to delete this asset?")) {
+    window.currentAssets = window.currentAssets.filter(item => item.id !== id);
+    alert("Asset removed successfully!");
+    refreshCurrentGalleryView();
+    updateStats();
+  }
+}
+
 // Fetch Assets from Cloudinary
 async function fetchGlobalAssets() {
   const grid = document.getElementById('galleryGrid');
-  if (grid) grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub, #888); padding: 40px;">লোড হচ্ছে...</p>`;
+  if (grid) grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub, #888); padding: 40px;">Loading technical assets...</p>`;
 
   const categories = ['sdh_hub', 'ecotec', 'energy_env'];
   let assets = [];
@@ -176,7 +193,7 @@ function renderMainHomeGallery() {
   const assets = window.currentAssets || [];
 
   if (assets.length === 0) {
-    grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub, #888); padding: 40px;">কোনো ফাইল পাওয়া যায়নি। সেটিংসে গিয়ে আপলোড করুন!</p>`;
+    grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub, #888); padding: 40px;">No technical assets available. Upload via Control Panel!</p>`;
     return;
   }
 
@@ -187,9 +204,16 @@ function renderMainHomeGallery() {
       <img src="${item.url}" alt="${item.title}" loading="lazy">
       <div class="card-details">
         <div class="card-title">${item.title}</div>
-        <a href="${item.url}" target="_blank" download class="download-link">
-          <i class="fa-solid fa-download"></i> Download High Res
-        </a>
+        <div style="display: flex; gap: 8px; margin-top: 8px;">
+          <a href="${item.url}" target="_blank" download class="download-link" style="flex:1;">
+            <i class="fa-solid fa-download"></i> Download
+          </a>
+          ${isAdminUnlocked ? `
+            <button onclick="deleteAsset('${item.id}')" style="background:#ff3366; color:#fff; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:bold;">
+              <i class="fa-solid fa-trash"></i> Delete
+            </button>
+          ` : ''}
+        </div>
       </div>
     `;
     grid.appendChild(card);
@@ -198,12 +222,12 @@ function renderMainHomeGallery() {
 
 // Enter Inside Banner Page Mode
 function enterBannerPage(categoryKey) {
+  window.currentActiveCategory = categoryKey;
   const mainHomeView = document.getElementById('mainHomeView');
   const bannerPageView = document.getElementById('bannerPageView');
   const bannerHeader = document.getElementById('activeBannerHeader');
   const bannerTitle = document.getElementById('bannerPageTitle');
   const bannerDesc = document.getElementById('bannerPageDesc');
-  const grid = document.getElementById('bannerGalleryGrid');
 
   const metaData = {
     'sdh_hub': {
@@ -226,18 +250,30 @@ function enterBannerPage(categoryKey) {
   const currentMeta = metaData[categoryKey];
   if (!currentMeta) return;
 
-  // Set Banner Info
   bannerTitle.innerText = currentMeta.title;
   bannerDesc.innerText = currentMeta.desc;
   bannerHeader.className = `hero-card ${currentMeta.bgClass}`;
 
-  // Filter Assets
+  renderBannerGalleryGrid(categoryKey);
+
+  mainHomeView.style.display = 'none';
+  bannerPageView.style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  const dropdown = document.getElementById('statsDropdown');
+  if (dropdown) dropdown.classList.remove('show');
+}
+
+function renderBannerGalleryGrid(categoryKey) {
+  const grid = document.getElementById('bannerGalleryGrid');
+  if (!grid) return;
+
   const assets = window.currentAssets || [];
   const filtered = assets.filter(item => item.category === categoryKey);
 
   grid.innerHTML = '';
   if (filtered.length === 0) {
-    grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub, #888); padding: 40px;">এই ব্যানারের ভেতরে এখনো কোনো ছবি আপলোড করা হয়নি!</p>`;
+    grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-sub, #888); padding: 40px;">No assets uploaded inside this category yet!</p>`;
   } else {
     filtered.forEach(item => {
       const card = document.createElement('div');
@@ -246,27 +282,35 @@ function enterBannerPage(categoryKey) {
         <img src="${item.url}" alt="${item.title}" loading="lazy">
         <div class="card-details">
           <div class="card-title">${item.title}</div>
-          <a href="${item.url}" target="_blank" download class="download-link">
-            <i class="fa-solid fa-download"></i> Download High Res
-          </a>
+          <div style="display: flex; gap: 8px; margin-top: 8px;">
+            <a href="${item.url}" target="_blank" download class="download-link" style="flex:1;">
+              <i class="fa-solid fa-download"></i> Download
+            </a>
+            ${isAdminUnlocked ? `
+              <button onclick="deleteAsset('${item.id}')" style="background:#ff3366; color:#fff; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:bold;">
+                <i class="fa-solid fa-trash"></i> Delete
+              </button>
+            ` : ''}
+          </div>
         </div>
       `;
       grid.appendChild(card);
     });
   }
+}
 
-  // Switch Views
-  mainHomeView.style.display = 'none';
-  bannerPageView.style.display = 'block';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-
-  // Close Stats Menu if open
-  const dropdown = document.getElementById('statsDropdown');
-  if (dropdown) dropdown.classList.remove('show');
+function refreshCurrentGalleryView() {
+  const isBannerView = document.getElementById('bannerPageView').style.display === 'block';
+  if (isBannerView && window.currentActiveCategory) {
+    renderBannerGalleryGrid(window.currentActiveCategory);
+  } else {
+    renderMainHomeGallery();
+  }
 }
 
 // Return to Main Home
 function openMainHomeView() {
+  window.currentActiveCategory = null;
   document.getElementById('bannerPageView').style.display = 'none';
   document.getElementById('mainHomeView').style.display = 'block';
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -288,7 +332,14 @@ function filterMedia() {
       <img src="${item.url}">
       <div class="card-details">
         <div class="card-title">${item.title}</div>
-        <a href="${item.url}" target="_blank" class="download-link"><i class="fa-solid fa-download"></i> Download</a>
+        <div style="display: flex; gap: 8px; margin-top: 8px;">
+          <a href="${item.url}" target="_blank" class="download-link" style="flex:1;"><i class="fa-solid fa-download"></i> Download</a>
+          ${isAdminUnlocked ? `
+            <button onclick="deleteAsset('${item.id}')" style="background:#ff3366; color:#fff; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:bold;">
+              <i class="fa-solid fa-trash"></i> Delete
+            </button>
+          ` : ''}
+        </div>
       </div>
     `;
     grid.appendChild(card);
@@ -312,12 +363,12 @@ function toggleTheme() {
 
 function clearAllData() {
   localStorage.clear();
-  alert("ক্যাশ ডাটা রিসেট করা হয়েছে!");
+  alert("Cache data reset successfully!");
   location.reload();
 }
 
 function handleAuth(e) {
   e.preventDefault();
-  alert("সফলভাবে লগইন হয়েছে!");
+  alert("Account action successful!");
   closeAuthModalDirect();
 }
