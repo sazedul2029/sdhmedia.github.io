@@ -6,7 +6,7 @@ let isAdminUnlocked = false;
 
 document.addEventListener('DOMContentLoaded', () => {
   fetchGlobalAssets();
-  loadSavedNotes();
+  renderAllSystemNotes();
 });
 
 function toggleSettingsModal() {
@@ -54,6 +54,7 @@ function toggleAdminAccess() {
   const lockText = document.getElementById('lockText');
   const lockIcon = document.getElementById('lockIcon');
   const uploadForm = document.getElementById('uploadForm');
+  const adminControls = document.querySelectorAll('.admin-note-controls');
 
   if (!isAdminUnlocked) {
     const password = prompt("Enter Admin Password (Default: 1234):");
@@ -66,7 +67,9 @@ function toggleAdminAccess() {
         const inputs = uploadForm.querySelectorAll('input, select, button');
         inputs.forEach(input => input.removeAttribute('disabled'));
       }
-      alert("Welcome Admin! Panel unlocked and Delete controls enabled.");
+      adminControls.forEach(ctrl => ctrl.style.display = 'block');
+      alert("Welcome Admin! You can now write/delete notes & control assets.");
+      renderAllSystemNotes();
       refreshCurrentGalleryView();
     } else if (password !== null) {
       alert("Incorrect Password! Default password is: 1234");
@@ -80,7 +83,9 @@ function toggleAdminAccess() {
       const inputs = uploadForm.querySelectorAll('input, select, button');
       inputs.forEach(input => input.setAttribute('disabled', 'true'));
     }
+    adminControls.forEach(ctrl => ctrl.style.display = 'none');
     alert("Admin Panel locked.");
+    renderAllSystemNotes();
     refreshCurrentGalleryView();
   }
 }
@@ -226,20 +231,87 @@ function renderMainHomeGallery() {
   });
 }
 
-// System Notes Manager
-function saveNotes(elementId) {
-  const content = document.getElementById(elementId).value;
-  localStorage.setItem(elementId, content);
-  alert("Technical notes saved successfully!");
+// System Notes Manager (Public view, Admin Add/Delete)
+function addSystemNote(type) {
+  if (!isAdminUnlocked) {
+    alert("Admin access required to add notes!");
+    return;
+  }
+
+  const inputEl = document.getElementById(`${type}Input`);
+  const text = inputEl.value.trim();
+
+  if (!text) {
+    alert("Please write something before adding!");
+    return;
+  }
+
+  const existingNotes = JSON.parse(localStorage.getItem(`notes_${type}`) || '[]');
+  existingNotes.push({ text, date: new Date().toLocaleDateString() });
+
+  localStorage.setItem(`notes_${type}`, JSON.stringify(existingNotes));
+  inputEl.value = '';
+  renderSystemNoteList(type);
 }
 
-function loadSavedNotes() {
-  ['mechanicalNotes', 'electricalNotes', 'powerNotes'].forEach(id => {
-    const saved = localStorage.getItem(id);
-    if (saved && document.getElementById(id)) {
-      document.getElementById(id).value = saved;
-    }
+function deleteSingleNote(type, index) {
+  if (!isAdminUnlocked) {
+    alert("Admin access required to delete notes!");
+    return;
+  }
+
+  if (confirm("Delete this specific note?")) {
+    let existingNotes = JSON.parse(localStorage.getItem(`notes_${type}`) || '[]');
+    existingNotes.splice(index, 1);
+    localStorage.setItem(`notes_${type}`, JSON.stringify(existingNotes));
+    renderSystemNoteList(type);
+  }
+}
+
+function clearSystemNotes(type) {
+  if (!isAdminUnlocked) {
+    alert("Admin access required!");
+    return;
+  }
+
+  if (confirm(`Clear ALL notes in ${type} category?`)) {
+    localStorage.removeItem(`notes_${type}`);
+    renderSystemNoteList(type);
+  }
+}
+
+function renderSystemNoteList(type) {
+  const displayEl = document.getElementById(`${type}DisplayList`);
+  if (!displayEl) return;
+
+  const notes = JSON.parse(localStorage.getItem(`notes_${type}`) || '[]');
+
+  if (notes.length === 0) {
+    displayEl.innerHTML = `<p style="color: #777; font-style: italic; font-size: 12px; margin: 0;">No technical documentation published yet.</p>`;
+    return;
+  }
+
+  let html = '<ul style="margin: 0; padding-left: 18px; list-style-type: square;">';
+  notes.forEach((item, index) => {
+    html += `
+      <li style="margin-bottom: 8px;">
+        <span>${item.text}</span>
+        <span style="font-size: 10px; opacity: 0.6; display: block; margin-top: 2px;">📅 ${item.date}</span>
+        ${isAdminUnlocked ? `
+          <button onclick="deleteSingleNote('${type}', ${index})" style="background: none; border: none; color: #ff4d4d; cursor: pointer; font-size: 11px; padding: 0; margin-top: 2px; text-decoration: underline;">
+            Delete
+          </button>
+        ` : ''}
+      </li>
+    `;
   });
+  html += '</ul>';
+
+  displayEl.innerHTML = html;
+}
+
+function renderAllSystemNotes() {
+  ['mechanical', 'electrical', 'power'].forEach(type => renderSystemNoteList(type));
 }
 
 // Enter Inside Banner Page Mode
