@@ -1,76 +1,112 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <!-- Google Search Console Verification -->
-  <meta name="google-site-verification" content="sXnnEZKWIvZap2gsMef_IVOG4vP2ZrC8oZZJZbgeH0o" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SDH Media Pro | Technical Hub</title>
+    
+    <!-- Google Search Console Verification (Fixed) -->
+    <meta name="google-site-verification" content="sXnnEZKWIvZap2gsMef_IVOG4vP2ZrC8oZZJZbgeH0o" />
+    <meta name="description" content="SDH Media Pro - MWM & Bangla Cat Gas Generator Technical Hub" />
 
-  <!-- Title & Meta Details -->
-  <title>SDH Media Pro</title>
-  <meta name="description" content="Official SDH Media Pro Portal: High-speed MWM & Bangla Cat Gas Generator Technical Hub" />
+    <!-- Tailwind CSS & FontAwesome Icons -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    body {
-      background-color: #0f172a;
-      color: #f8fafc;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      text-align: center;
-      padding: 20px;
-    }
-    .card {
-      background: #1e293b;
-      padding: 40px 30px;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-      max-width: 500px;
-      width: 100%;
-      border: 1px solid #334155;
-    }
-    h1 {
-      color: #38bdf8;
-      font-size: 2rem;
-      margin-bottom: 10px;
-    }
-    p {
-      color: #94a3b8;
-      font-size: 1rem;
-      line-height: 1.6;
-      margin-bottom: 25px;
-    }
-    .btn {
-      display: inline-block;
-      background-color: #0284c7;
-      color: #fff;
-      padding: 12px 24px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: bold;
-      transition: background 0.3s ease;
-    }
-    .btn:hover {
-      background-color: #0369a1;
-    }
-  </style>
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; font-family: sans-serif; }
+        .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col justify-between">
 
-  <div class="card">
-    <h1>SDH Media Pro</h1>
-    <p>MWM & Bangla Cat Gas Generator Technical Hub</p>
-    <a href="#" class="btn">Welcome to Portal</a>
-  </div>
+    <!-- Header Section -->
+    <header class="glass-card sticky top-0 z-50 p-4 border-b border-slate-700">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-bolt text-sky-400 text-2xl"></i>
+                <h1 class="text-xl font-bold tracking-wide text-sky-400">SDH Media Pro</h1>
+            </div>
+            <nav class="hidden md:flex space-x-6 text-sm font-medium">
+                <a href="#home" class="hover:text-sky-400 transition">হোম</a>
+                <a href="#notes" class="hover:text-sky-400 transition">টেকনিক্যাল নোটস</a>
+                <a href="#media" class="hover:text-sky-400 transition">মিডিয়া</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto p-4 flex-grow w-full space-y-8" id="home">
+        
+        <!-- Banner / Hero Section -->
+        <section class="glass-card rounded-2xl p-6 md:p-10 text-center border border-slate-700 shadow-xl">
+            <h2 class="text-2xl md:text-4xl font-extrabold text-white mb-3">
+                MWM & Bangla Cat Gas Generator Technical Hub
+            </h2>
+            <p class="text-slate-400 max-w-2xl mx-auto text-sm md:text-base">
+                এখানে জেনারেটর মেইনটেন্যান্স, ট্রাবলশুটিং এবং টেকনিক্যাল তথ্য সম্পর্কিত সকল গাইড পাওয়ার এক নির্ভরযোগ্য মাধ্যম।
+            </p>
+        </section>
+
+        <!-- Media / Video Upload & Display Section -->
+        <section id="media" class="space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-xl font-bold text-sky-400 flex items-center gap-2">
+                    <i class="fa-solid fa-photo-film"></i> গ্যালারি ও মিডিয়া
+                </h3>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Sample Hero Card 1 -->
+                <div class="glass-card rounded-xl overflow-hidden shadow-lg border border-slate-700">
+                    <img src="hero1.png" alt="Technical Manual" class="w-full h-48 object-cover" onerror="this.src='https://via.placeholder.com/400x200?text=SDH+Media+Pro'">
+                    <div class="p-4">
+                        <h4 class="font-bold text-white mb-1">গ্যাস জেনারেটর ট্রাবলশুটিং</h4>
+                        <p class="text-xs text-slate-400">টেকনিক্যাল গাইডলাইন ও ছবি</p>
+                    </div>
+                </div>
+
+                <!-- Sample Hero Card 2 -->
+                <div class="glass-card rounded-xl overflow-hidden shadow-lg border border-slate-700">
+                    <img src="hero2.png" alt="Technical Manual" class="w-full h-48 object-cover" onerror="this.src='https://via.placeholder.com/400x200?text=SDH+Media+Pro'">
+                    <div class="p-4">
+                        <h4 class="font-bold text-white mb-1">মেইনটেন্যান্স রেকর্ডস</h4>
+                        <p class="text-xs text-slate-400">ভিজুয়াল চেকলিস্ট এবং ড্রইং</p>
+                    </div>
+                </div>
+
+                <!-- Sample Hero Card 3 -->
+                <div class="glass-card rounded-xl overflow-hidden shadow-lg border border-slate-700">
+                    <img src="hero3.png" alt="Technical Manual" class="w-full h-48 object-cover" onerror="this.src='https://via.placeholder.com/400x200?text=SDH+Media+Pro'">
+                    <div class="p-4">
+                        <h4 class="font-bold text-white mb-1">MWM ইঞ্জিনের স্পেসিফিকেশন</h4>
+                        <p class="text-xs text-slate-400">অপারেটিং অ্যান্ড সার্ভিস ডিয়াগ্রাম</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Notes / Knowledge Base Section -->
+        <section id="notes" class="glass-card rounded-2xl p-6 border border-slate-700">
+            <h3 class="text-xl font-bold text-sky-400 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-book-open"></i> গুরুত্বপূর্ণ নোটসমূহ
+            </h3>
+            <div class="space-y-3 text-sm text-slate-300">
+                <div class="p-3 bg-slate-800/50 rounded-lg border border-slate-700/50">
+                    📌 <strong>স্মার্ট চেকলিস্ট:</strong> দৈনিক ইঞ্জিন চেকআপের পূর্বে সকল ভালভ এবং সেন্সর ডাটা নিশ্চিত করুন।
+                </div>
+                <div class="p-3 bg-slate-800/50 rounded-lg border border-slate-700/50">
+                    📌 <strong>ডকুমেন্টেশন:</strong> সাম্প্রতিক সার্ভিসিং নোটস ও টেকনিক্যাল হিস্ট্রি আপডেট রাখার নির্দেশিকা।
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass-card text-center p-4 border-t border-slate-700 text-xs text-slate-400">
+        <p>&copy; SDH Media Pro. All rights reserved.</p>
+    </footer>
 
 </body>
 </html>
